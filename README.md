@@ -195,7 +195,7 @@ double result = tr.ConvertDMStoDecimalDegrees(dms);
 
 # Tests
 
-Check [Tests](Transformations/Tests) project for more information.
+Check [Tests](https://github.com/bojko108/Transformations.NET/tree/master/Tests) project for more information.
 
 ## License
 
