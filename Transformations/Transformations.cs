@@ -34,6 +34,53 @@ namespace BojkoSoft.Transformations
         #region GEOGRAPHIC AND LAMBERT
 
         /// <summary>
+        /// Transforms geographic coordinates to projected
+        /// </summary>
+        /// <param name="inputPoint">input geographic coordinates</param>
+        /// <param name="outputProjection">output Lambert projection</param>
+        /// <param name="outputEllipsoid">output Lambert projection is using this ellipsoid</param>
+        /// <returns>geographic coordinates projected to Lambert projection</returns>
+        public GeoPoint TransformGeographicToLambert(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_2005_KK, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
+        {
+            GeoPoint resultPoint = new GeoPoint();
+
+            Projection targetProjection = this.projections[outputProjection];
+            Ellipsoid targetEllipsoid = this.ellipsoids[outputEllipsoid];
+
+            double Lon0 = targetProjection.Lon0.ToRad(),
+                Lat1 = targetProjection.Lat1.ToRad(),
+                Lat2 = targetProjection.Lat2.ToRad(),
+                w1 = Helpers.CalculateWParameter((targetProjection.Lat1 * Math.PI) / 180, targetEllipsoid.e2),
+                w2 = Helpers.CalculateWParameter((targetProjection.Lat2 * Math.PI) / 180, targetEllipsoid.e2),
+                Q1 = Helpers.CalculateQParameter((targetProjection.Lat1 * Math.PI) / 180, targetEllipsoid.e),
+                Q2 = Helpers.CalculateQParameter((targetProjection.Lat2 * Math.PI) / 180, targetEllipsoid.e),
+                Lat0 = Math.Asin(Math.Log((w2 * Math.Cos(Lat1)) / (w1 * Math.Cos(Lat2))) / (Q2 - Q1)),
+                Q0 = Helpers.CalculateQParameter(Lat0, targetEllipsoid.e),
+                Re = (targetEllipsoid.a * Math.Cos(Lat1) * Math.Exp(Q1 * Math.Sin(Lat0))) / w1 / Math.Sin(Lat0),
+                R0 = Re / Math.Exp(Q0 * Math.Sin(Lat0)),
+                x0 = Helpers.CalculateCentralPointX(Lat0, targetEllipsoid.a, targetEllipsoid.e2);
+
+            double R = 0.0,
+                Q = 0.0,
+                gama = 0.0,
+                latitude = inputPoint.X.ToRad(),
+                longitude = inputPoint.Y.ToRad();
+
+            double A = Math.Log((1 + Math.Sin(latitude)) / (1 - Math.Sin(latitude))),
+              B = targetEllipsoid.e * Math.Log((1 + targetEllipsoid.e * Math.Sin(latitude)) / (1 - targetEllipsoid.e * Math.Sin(latitude)));
+
+            Q = (A - B) / 2;
+            R = Re / Math.Exp(Q * Math.Sin(Lat0));
+
+            gama = (longitude - Lon0) * Math.Sin(Lat0);
+
+            resultPoint.X = R0 + x0 - R * Math.Cos(gama);
+            resultPoint.Y = targetProjection.Y0 + R * Math.Sin(gama);
+
+            return resultPoint;
+        }
+        
+        /// <summary>
         /// Transforms projected coordinates to geographic
         /// </summary>
         /// <param name="inputPoint">input coordinates in Lambert projection</param>
@@ -105,54 +152,7 @@ namespace BojkoSoft.Transformations
 
             return resultPoint;
         }
-
-        /// <summary>
-        /// Transforms geographic coordinates to projected
-        /// </summary>
-        /// <param name="inputPoint">input geographic coordinates</param>
-        /// <param name="outputProjection">output Lambert projection</param>
-        /// <param name="outputEllipsoid">output Lambert projection is using this ellipsoid</param>
-        /// <returns>geographic coordinates projected to Lambert projection</returns>
-        public GeoPoint TransformGeographicToLambert(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_2005_KK, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
-        {
-            GeoPoint resultPoint = new GeoPoint();
-
-            Projection targetProjection = this.projections[outputProjection];
-            Ellipsoid targetEllipsoid = this.ellipsoids[outputEllipsoid];
-
-            double Lon0 = targetProjection.Lon0.ToRad(),
-                Lat1 = targetProjection.Lat1.ToRad(),
-                Lat2 = targetProjection.Lat2.ToRad(),
-                w1 = Helpers.CalculateWParameter((targetProjection.Lat1 * Math.PI) / 180, targetEllipsoid.e2),
-                w2 = Helpers.CalculateWParameter((targetProjection.Lat2 * Math.PI) / 180, targetEllipsoid.e2),
-                Q1 = Helpers.CalculateQParameter((targetProjection.Lat1 * Math.PI) / 180, targetEllipsoid.e),
-                Q2 = Helpers.CalculateQParameter((targetProjection.Lat2 * Math.PI) / 180, targetEllipsoid.e),
-                Lat0 = Math.Asin(Math.Log((w2 * Math.Cos(Lat1)) / (w1 * Math.Cos(Lat2))) / (Q2 - Q1)),
-                Q0 = Helpers.CalculateQParameter(Lat0, targetEllipsoid.e),
-                Re = (targetEllipsoid.a * Math.Cos(Lat1) * Math.Exp(Q1 * Math.Sin(Lat0))) / w1 / Math.Sin(Lat0),
-                R0 = Re / Math.Exp(Q0 * Math.Sin(Lat0)),
-                x0 = Helpers.CalculateCentralPointX(Lat0, targetEllipsoid.a, targetEllipsoid.e2);
-
-            double R = 0.0,
-                Q = 0.0,
-                gama = 0.0,
-                latitude = inputPoint.X.ToRad(),
-                longitude = inputPoint.Y.ToRad();
-
-            double A = Math.Log((1 + Math.Sin(latitude)) / (1 - Math.Sin(latitude))),
-              B = targetEllipsoid.e * Math.Log((1 + targetEllipsoid.e * Math.Sin(latitude)) / (1 - targetEllipsoid.e * Math.Sin(latitude)));
-
-            Q = (A - B) / 2;
-            R = Re / Math.Exp(Q * Math.Sin(Lat0));
-
-            gama = (longitude - Lon0) * Math.Sin(Lat0);
-
-            resultPoint.X = R0 + x0 - R * Math.Cos(gama);
-            resultPoint.Y = targetProjection.Y0 + R * Math.Sin(gama);
-
-            return resultPoint;
-        }
-
+        
         #endregion
 
 
