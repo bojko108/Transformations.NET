@@ -2,7 +2,7 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using BojkoSoft.Transformations.Projections;
+using BojkoSoft.Transformations.Constants;
 
 namespace BojkoSoft.Transformations.Tests
 {
@@ -20,12 +20,31 @@ namespace BojkoSoft.Transformations.Tests
         }
 
         [TestMethod()]
+        public void TransformLambertToUTMTest()
+        {
+            GeoPoint input = new GeoPoint(4701972.999, 438286.035);
+            GeoPoint expected = new GeoPoint(4702270.179, 314955.869);
+
+            // go from Lambert to Geographic and then to UTM
+            GeoPoint result = this.tr.TransformLambertProjectedToGeographic(input);
+            result = this.tr.TransformGeographicToUTM(result);
+
+            double deltaX = Math.Abs(expected.X - result.X);
+            Assert.IsTrue(deltaX <= this.deltaInMeters, "Northing is not calculated correctly");
+
+            double deltaY = Math.Abs(expected.Y - result.Y);
+            Assert.IsTrue(deltaY <= this.deltaInMeters, "Easting is not calculated correctly");
+
+            Console.WriteLine(String.Format("expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
+        }
+
+        [TestMethod()]
         public void TransformGeographicToUTMTest()
         {
             GeoPoint input = new GeoPoint(42.450682, 24.749747);
             GeoPoint expected = new GeoPoint(4702270.179, 314955.869);
 
-            GeoPoint result = this.tr.TransformGeographicToUTM(input, enumUtmZone.Zone35N);
+            GeoPoint result = this.tr.TransformGeographicToUTM(input);
 
             double deltaX = Math.Abs(expected.X - result.X);
             Assert.IsTrue(deltaX <= this.deltaInMeters, "Northing is not calculated correctly");
@@ -42,7 +61,7 @@ namespace BojkoSoft.Transformations.Tests
             GeoPoint input = new GeoPoint(4702270.179, 314955.869);
             GeoPoint expected = new GeoPoint(42.450682, 24.749747);
 
-            GeoPoint result = this.tr.TransformUTMToGeographic(input, enumUtmZone.Zone35N);
+            GeoPoint result = this.tr.TransformUTMToGeographic(input);
 
             double deltaX = Math.Abs(expected.X - result.X);
             Assert.IsTrue(deltaX <= this.deltaInDegrees, "Latitude is not calculated correctly");
@@ -60,7 +79,7 @@ namespace BojkoSoft.Transformations.Tests
             GeoPoint input = new GeoPoint(4738563.049, 8496424.783);
             GeoPoint expected = new GeoPoint(4832666.465, 192546.481);
 
-            GeoPoint result = this.tr.Transform1970ToUTM(input, enumKC1970Zone.K3);
+            GeoPoint result = this.tr.Transform1970ToUTM(input, enumProjections.BGS_1970_К3);
 
             double deltaX = Math.Abs(expected.X - result.X);
             Assert.IsTrue(deltaX <= this.deltaInMeters, "K3 Northing is not calculated correctly");
@@ -75,7 +94,7 @@ namespace BojkoSoft.Transformations.Tests
             input = new GeoPoint(4601646.686, 9492261.737);
             expected = new GeoPoint(4665836.785, 444734.294);
 
-            result = this.tr.Transform1970ToUTM(input, enumKC1970Zone.K5);
+            result = this.tr.Transform1970ToUTM(input, enumProjections.BGS_1970_К5);
 
             deltaX = Math.Abs(expected.X - result.X);
             Assert.IsTrue(deltaX <= this.deltaInMeters, "K5 Northing is not calculated correctly");
@@ -90,7 +109,7 @@ namespace BojkoSoft.Transformations.Tests
             input = new GeoPoint(4727661.403, 9563268.559);
             expected = new GeoPoint(4826823.258, 497499.587);
 
-            result = this.tr.Transform1970ToUTM(input, enumKC1970Zone.K7);
+            result = this.tr.Transform1970ToUTM(input, enumProjections.BGS_1970_К7);
 
             deltaX = Math.Abs(expected.X - result.X);
             Assert.IsTrue(deltaX <= this.deltaInMeters, "K7 Northing is not calculated correctly");
@@ -105,7 +124,7 @@ namespace BojkoSoft.Transformations.Tests
             input = new GeoPoint(4577015.806, 8615896.123);
             expected = new GeoPoint(4702270.179, 314955.869);
 
-            result = this.tr.Transform1970ToUTM(input, enumKC1970Zone.K9);
+            result = this.tr.Transform1970ToUTM(input, enumProjections.BGS_1970_К9);
 
             deltaX = Math.Abs(expected.X - result.X);
             Assert.IsTrue(deltaX <= this.deltaInMeters, "K9 Northing is not calculated correctly");

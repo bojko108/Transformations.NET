@@ -42,17 +42,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ellipsoids\Ellipsoid.cs" />
+    <Compile Include="Constants\Ellipsoids.cs" />
+    <Compile Include="Constants\Ellipsoid.cs" />
+    <Compile Include="Constants\Projection.cs" />
     <Compile Include="Projections\ProjectionKK2005.cs" />
-    <Compile Include="Projections\ProjectionClass.cs" />
+    <Compile Include="Constants\Projections.cs" />
     <Compile Include="Projections\ProjectionUTM34N.cs" />
     <Compile Include="Projections\ProjectionUTM35N.cs" />
-    <Compile Include="Projections\Zones.cs" />
     <Compile Include="ControlPoints\ControlPoints.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="GeoPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transformations.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

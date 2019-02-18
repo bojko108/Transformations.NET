@@ -1,12 +1,11 @@
 ﻿/**
- * author: bojko108 <bojko108@gmail.com>
+ * author: bojko108 (bojko108@gmail.com)
  */
 
 using System;
 using System.Collections.Generic;
 
-using BojkoSoft.Transformations.Ellipsoids;
-using BojkoSoft.Transformations.Projections;
+using BojkoSoft.Transformations.Constants;
 
 namespace BojkoSoft.Transformations
 {
@@ -15,27 +14,8 @@ namespace BojkoSoft.Transformations
     /// </summary>
     public class Transformations
     {
-        /// <summary>
-        /// used for transforming from/to Web Mercator projection (EPSG:3857)
-        /// </summary>
-        private Ellipsoid sphere = new Ellipsoid(6378137.0, 6378137.0);
-        /// <summary>
-        /// Used as a datum for all other projections (EPSG:4326)
-        /// </summary>
-        private Ellipsoid wgs84 = new Ellipsoid(6378137.0, 6356752.314245);
-
-        /// <summary>
-        /// Bulgarian KKS2005. Uses Lambert Conformal Conic Projection with 2SP
-        /// </summary>
-        private ProjectionKK2005 kks2005;
-        /// <summary>
-        /// UTM zone 34 north
-        /// </summary>
-        private ProjectionUTM34N utm34n;
-        /// <summary>
-        /// UTM zone 35 north
-        /// </summary>
-        private ProjectionUTM35N utm35n;
+        private Ellipsoids ellipsoids;
+        private Projections projections;
 
         /// <summary>
         /// Transform points between different coordinate systems.
@@ -49,9 +29,8 @@ namespace BojkoSoft.Transformations
                 ControlPoints.ControlPoints.LoadControlPoints();
             }
 
-            this.kks2005 = new ProjectionKK2005(this.wgs84);
-            this.utm34n = new ProjectionUTM34N();
-            this.utm35n = new ProjectionUTM35N();
+            this.ellipsoids = new Ellipsoids();
+            this.projections = new Projections();
         }
 
 
@@ -60,51 +39,33 @@ namespace BojkoSoft.Transformations
         /// <summary>
         /// Transforms geographic coordinates (Latitude, Longitude - EPSG:4326) to projected - Northing, Easting (UTM).
         /// </summary>
-        /// <param name="latitude">Latitude value in WGS84</param>
-        /// <param name="longitude">Longitude value in WGS84</param>
-        /// <param name="targetUtmZone">Target UTM zone number</param>
+        /// <param name="inputPoint">Input point</param>
+        /// <param name="targetUtmProjection">Target UTM projection</param>
+        /// <param name="inputEllipsoid">Input point ellipsod</param>
         /// <returns></returns>
-        public GeoPoint TransformGeographicToUTM(GeoPoint inputPoint, enumUtmZone targetUtmZone = enumUtmZone.Zone35N)
+        public GeoPoint TransformGeographicToUTM(GeoPoint inputPoint, enumProjections targetUtmProjection = enumProjections.UTM35N, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
             inputPoint.X = (inputPoint.X * Math.PI) / 180;
             inputPoint.Y = (inputPoint.Y * Math.PI) / 180;
 
-            double lon0, x0, y0, scale;
-
-            switch (targetUtmZone)
-            {
-                case enumUtmZone.Zone34N:
-                    lon0 = this.utm34n.Lon0;
-                    lon0 = lon0 * (Math.PI / 180);
-                    x0 = this.utm34n.X0;
-                    y0 = this.utm34n.Y0;
-                    scale = this.utm34n.Scale;
-                    break;
-                default:
-                    lon0 = this.utm35n.Lon0;
-                    lon0 = lon0 * (Math.PI / 180);
-                    x0 = this.utm35n.X0;
-                    y0 = this.utm35n.Y0;
-                    scale = this.utm35n.Scale;
-                    break;
-            }
-
+            Projection targetProjection = this.projections[targetUtmProjection];
+            Ellipsoid sourceEllipsoid = this.ellipsoids[inputEllipsoid];
 
             double n, nu2, t, t2, l,
                 coef13, coef14, coef15, coef16,
                 coef17, coef18, cf;
             double phi;
 
-            phi = Helpers.ArcLengthOfMeridian(inputPoint.X, this.wgs84.a, this.wgs84.b);
+            phi = Helpers.ArcLengthOfMeridian(inputPoint.X, sourceEllipsoid.a, sourceEllipsoid.b);
             cf = Math.Cos(inputPoint.X);
-            nu2 = this.wgs84.ep2 * Math.Pow(Math.Cos(inputPoint.X), 2.0);
-            n = Math.Pow(this.wgs84.a, 2.0) / (this.wgs84.b * Math.Sqrt(1 + nu2));
+            nu2 = sourceEllipsoid.ep2 * Math.Pow(Math.Cos(inputPoint.X), 2.0);
+            n = Math.Pow(sourceEllipsoid.a, 2.0) / (sourceEllipsoid.b * Math.Sqrt(1 + nu2));
             t = Math.Tan(inputPoint.X);
             t2 = t * t;
 
-            l = inputPoint.Y - lon0;
+            l = inputPoint.Y - (targetProjection.Lon0 * Math.PI) / 180;
 
             coef13 = 1.0 - t2 + nu2;
             coef14 = 5.0 - t2 + 9 * nu2 + 4.0 * (nu2 * nu2);
@@ -124,9 +85,9 @@ namespace BojkoSoft.Transformations
                 + (t / 720.0 * n * Math.Pow(Math.Cos(inputPoint.X), 6.0) * coef16 * Math.Pow(l, 6.0))
                 + (t / 40320.0 * n * Math.Pow(Math.Cos(inputPoint.X), 8.0) * coef18 * Math.Pow(l, 8.0));
 
-            resultPoint.X *= scale;
-            resultPoint.Y *= scale;
-            resultPoint.Y += y0;
+            resultPoint.X *= targetProjection.Scale;
+            resultPoint.Y *= targetProjection.Scale;
+            resultPoint.Y += targetProjection.Y0;
 
             return resultPoint;
         }
@@ -134,49 +95,30 @@ namespace BojkoSoft.Transformations
         /// <summary>
         /// Transforms projected coordinates (Northing, Easting - UTM) to geographic - Latitude, Longitude (EPSG:4326).
         /// </summary>
-        /// <param name="northing">Northing coordinate in UTM Projection</param>
-        /// <param name="easting">Easting coordinate in UTM Projection</param>
-        /// <param name="sourceUtmZone">Input coordinates are in that UTM zone</param>
+        /// <param name="inputPoint">Input point</param>
+        /// <param name="sourceUtmProjection">Input point projection</param>
+        /// <param name="outputEllipsoid">Output ellipsoid</param>
         /// <returns></returns>
-        public GeoPoint TransformUTMToGeographic(GeoPoint inputPoint, enumUtmZone sourceUtmZone = enumUtmZone.Zone35N)
+        public GeoPoint TransformUTMToGeographic(GeoPoint inputPoint, enumProjections sourceUtmProjection = enumProjections.UTM35N, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
-            double lon0, x0, y0, scale;
+            Projection sourceProjection = this.projections[sourceUtmProjection];
+            Ellipsoid targetEllipsoid = this.ellipsoids[outputEllipsoid];
 
-            switch (sourceUtmZone)
-            {
-                case enumUtmZone.Zone34N:
-                    lon0 = this.utm34n.Lon0;
-                    lon0 = lon0 * (Math.PI / 180);
-                    x0 = this.utm34n.X0;
-                    y0 = this.utm34n.Y0;
-                    scale = this.utm34n.Scale;
-                    break;
-                default:
-                    lon0 = this.utm35n.Lon0;
-                    lon0 = lon0 * (Math.PI / 180);
-                    x0 = this.utm35n.X0;
-                    y0 = this.utm35n.Y0;
-                    scale = this.utm35n.Scale;
-                    break;
-            }
-
-            inputPoint.Y -= y0;
-            inputPoint.Y /= scale;
-            inputPoint.X /= scale;
-
-            double nn = double.Parse(((int)sourceUtmZone).ToString());
+            inputPoint.Y -= sourceProjection.Y0;
+            inputPoint.Y /= sourceProjection.Scale;
+            inputPoint.X /= sourceProjection.Scale;
 
             double phif, Nf, Nfpow, nuf2, tf, tf2, tf4, cf, x1frac, x2frac,
                 x3frac, x4frac, x5frac, x6frac, x7frac, x8frac, x2poly,
                 x3poly, x4poly, x5poly, x6poly, x7poly, x8poly;
 
-            phif = Helpers.FootpointLatitude(inputPoint.X, this.wgs84.a, this.wgs84.b);
+            phif = Helpers.FootpointLatitude(inputPoint.X, targetEllipsoid.a, targetEllipsoid.b);
 
             cf = Math.Cos(phif);
-            nuf2 = this.wgs84.ep2 * Math.Pow(cf, 2.0);
-            Nf = Math.Pow(this.wgs84.a, 2.0) / (this.wgs84.b * Math.Sqrt(1 + nuf2));
+            nuf2 = targetEllipsoid.ep2 * Math.Pow(cf, 2.0);
+            Nf = Math.Pow(targetEllipsoid.a, 2.0) / (targetEllipsoid.b * Math.Sqrt(1 + nuf2));
             Nfpow = Nf;
             tf = Math.Tan(phif);
             tf2 = tf * tf;
@@ -211,7 +153,7 @@ namespace BojkoSoft.Transformations
                 + x6frac * x6poly * Math.Pow(inputPoint.Y, 6.0)
                 + x8frac * x8poly * Math.Pow(inputPoint.Y, 8.0);
 
-            resultPoint.Y = lon0
+            resultPoint.Y = ((sourceProjection.Lon0 * Math.PI) / 180)
                 + x1frac * inputPoint.Y
                 + x3frac * x3poly * Math.Pow(inputPoint.Y, 3.0)
                 + x5frac * x5poly * Math.Pow(inputPoint.Y, 5.0)
@@ -231,11 +173,10 @@ namespace BojkoSoft.Transformations
         /// <summary>
         /// Transform between KC1970 and UTM Projection (WGS84)
         /// </summary>
-        /// <param name="x">X coordinate in KC1970</param>
-        /// <param name="y">Y coordinate in KC1970</param>
-        /// <param name="source1970Zone">Input coordinates are in that zone (KC1970)</param>
+        /// <param name="inputPoint">X coordinate in KC1970</param>
+        /// <param name="source1970Projection">Input coordinates are in that zone (KC1970)</param>
         /// <returns></returns>
-        public GeoPoint Transform1970ToUTM(GeoPoint inputPoint, enumKC1970Zone source1970Zone = enumKC1970Zone.K9)
+        public GeoPoint Transform1970ToUTM(GeoPoint inputPoint, enumProjections source1970Projection = enumProjections.BGS_1970_К9)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -244,14 +185,24 @@ namespace BojkoSoft.Transformations
 
             string[] lol;
 
-            proba = this.mapList1970Name(((int)source1970Zone).ToString(), inputPoint);
+            int zone;
+            switch (source1970Projection)
+            {
+                case enumProjections.BGS_1970_К3: zone = 3; break;
+                case enumProjections.BGS_1970_К5: zone = 5; break;
+                case enumProjections.BGS_1970_К7: zone = 7; break;
+                case enumProjections.BGS_1970_К9: zone = 9; break;
+                default: zone = 0; break;
+            }
+
+            proba = this.MapList1970Name(zone, inputPoint);
 
             List<double> VertexX = new List<double>();
             List<double> VertexY = new List<double>();
             List<double> n = new List<double>();
             List<double> e = new List<double>();
 
-            if (this.mapList1970XY(proba, out VertexX, out VertexY) == true)
+            if (this.MapList1970XY(proba, out VertexX, out VertexY) == true)
             {
                 if (ControlPoints.ControlPoints.dicMapList.ContainsKey(proba))
                 {
@@ -289,8 +240,7 @@ namespace BojkoSoft.Transformations
         /// Transform between UTM (WGS84) and KC1970. There is no need of passing UTM or KC1970 zone numbers as 
         /// the transformation is done by calculating local transformation parameters.
         /// </summary>
-        /// <param name="northing">Northing coordinate in UTM Projection</param>
-        /// <param name="easting">Easting coordinate in UTM Projection</param>
+        /// <param name="inputPoint">Northing coordinate in UTM Projection</param>
         /// <returns></returns>
         public GeoPoint TransformUTMTo1970(GeoPoint inputPoint)
         {
@@ -308,9 +258,8 @@ namespace BojkoSoft.Transformations
             List<double> n = new List<double>();
             List<double> e = new List<double>();
 
-            if (mapList1970XY(proba, out VertexX, out VertexY) == true)
+            if (this.MapList1970XY(proba, out VertexX, out VertexY) == true)
             {
-
                 klist = ControlPoints.ControlPoints.dicMapList[proba];
                 klist = klist.Trim();
             }
@@ -337,7 +286,7 @@ namespace BojkoSoft.Transformations
         /// <param name="VertexX"></param>
         /// <param name="VertexY"></param>
         /// <returns></returns>
-        private bool mapList1970XY(string numberList, out List<double> VertexX, out List<double> VertexY)
+        private bool MapList1970XY(string numberList, out List<double> VertexX, out List<double> VertexY)
         {
             VertexX = new List<double>();
             VertexY = new List<double>();
@@ -435,10 +384,9 @@ namespace BojkoSoft.Transformations
         /// Calculates map sheet number in 1970 (M1:5000)
         /// </summary>
         /// <param name="zone"></param>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+        /// <param name="point"></param>
         /// <returns></returns>
-        private string mapList1970Name(string zone, GeoPoint point)
+        private string MapList1970Name(int zone, GeoPoint point)
         {
             int i, j;
             bool sheet = false;
@@ -448,10 +396,10 @@ namespace BojkoSoft.Transformations
 
             switch (zone)
             {
-                case "3": X0 = 4880000; Y0 = 8340000; break;
-                case "5": X0 = 4740000; Y0 = 9340000; break;
-                case "7": X0 = 4860000; Y0 = 9360000; break;
-                case "9": X0 = 4720000; Y0 = 8320000; break;
+                case 3: X0 = 4880000; Y0 = 8340000; break;
+                case 5: X0 = 4740000; Y0 = 9340000; break;
+                case 7: X0 = 4860000; Y0 = 9360000; break;
+                case 9: X0 = 4720000; Y0 = 8320000; break;
                 default: return "";
             }
 
@@ -504,19 +452,28 @@ namespace BojkoSoft.Transformations
         /// Transforms projected coordinates (Northing, Easting - Lambert Conformal Conic Projection 2SP) to geographic - Latitude, Longitude (EPSG:4326).
         /// </summary>
         /// <param name="inputPoint">Input coordinates</param>
+        /// <param name="inputProjection">Input coordinates</param>
+        /// <param name="outputEllipsoid">Input coordinates</param>
         /// <returns></returns>
-        public GeoPoint TransformLambertProjectedToGeographic(GeoPoint inputPoint)
+        public GeoPoint TransformLambertProjectedToGeographic(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_2005_KK, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
-            double Lon0 = (this.kks2005.Lon0 * Math.PI) / 180,
-                Lat1 = (this.kks2005.Lat1 * Math.PI) / 180,
-                Lat2 = (this.kks2005.Lat2 * Math.PI) / 180,
-                Lat0 = Math.Asin(Math.Log((this.kks2005.w2 * Math.Cos(Lat1)) / (this.kks2005.w1 * Math.Cos(Lat2))) / (this.kks2005.Q2 - this.kks2005.Q1)),
-                Q0 = Helpers.CalculateQParameter(Lat0, this.wgs84.e),
-                Re = (this.wgs84.a * Math.Cos(Lat1) * Math.Exp(this.kks2005.Q1 * Math.Sin(Lat0))) / this.kks2005.w1 / Math.Sin(Lat0),
+            Projection sourceProjection = this.projections[inputProjection];
+            Ellipsoid targetEllipsoid = this.ellipsoids[outputEllipsoid];
+
+            double Lon0 = (sourceProjection.Lon0 * Math.PI) / 180,
+                Lat1 = (sourceProjection.Lat1 * Math.PI) / 180,
+                Lat2 = (sourceProjection.Lat2 * Math.PI) / 180,
+                w1 = Helpers.CalculateWParameter((sourceProjection.Lat1 * Math.PI) / 180, targetEllipsoid.e2),
+                w2 = Helpers.CalculateWParameter((sourceProjection.Lat2 * Math.PI) / 180, targetEllipsoid.e2),
+                Q1 = Helpers.CalculateQParameter((sourceProjection.Lat1 * Math.PI) / 180, targetEllipsoid.e),
+                Q2 = Helpers.CalculateQParameter((sourceProjection.Lat2 * Math.PI) / 180, targetEllipsoid.e),
+                Lat0 = Math.Asin(Math.Log((w2 * Math.Cos(Lat1)) / (w1 * Math.Cos(Lat2))) / (Q2 - Q1)),
+                Q0 = Helpers.CalculateQParameter(Lat0, targetEllipsoid.e),
+                Re = (targetEllipsoid.a * Math.Cos(Lat1) * Math.Exp(Q1 * Math.Sin(Lat0))) / w1 / Math.Sin(Lat0),
                 R0 = Re / Math.Exp(Q0 * Math.Sin(Lat0)),
-                x0 = Helpers.CalculateCentralPointX(Lat0, this.wgs84.a, this.wgs84.e2);
+                x0 = Helpers.CalculateCentralPointX(Lat0, targetEllipsoid.a, targetEllipsoid.e2);
 
             double lat = 0.0,
              lon = 0.0,
@@ -530,7 +487,7 @@ namespace BojkoSoft.Transformations
              y = inputPoint.Y;
 
             // determine latitude iteratively
-            R = Math.Sqrt(Math.Pow(y - this.kks2005.Y0, 2) + Math.Pow(R0 + x0 - x, 2));
+            R = Math.Sqrt(Math.Pow(y - sourceProjection.Y0, 2) + Math.Pow(R0 + x0 - x, 2));
             Q = Math.Log(Re / R) / Math.Sin(Lat0);
             Latp = Math.Asin((Math.Exp(2 * Q) - 1) / (Math.Exp(2 * Q) + 1));
 
@@ -538,10 +495,10 @@ namespace BojkoSoft.Transformations
             {
                 f1 =
                   (Math.Log((1 + Math.Sin(Latp)) / (1 - Math.Sin(Latp))) -
-                    this.wgs84.e * Math.Log((1 + this.wgs84.e * Math.Sin(Latp)) / (1 - this.wgs84.e * Math.Sin(Latp)))) /
+                    targetEllipsoid.e * Math.Log((1 + targetEllipsoid.e * Math.Sin(Latp)) / (1 - targetEllipsoid.e * Math.Sin(Latp)))) /
                     2 -
                   Q;
-                f2 = 1.0 / (1 - Math.Pow(Math.Sin(Latp), 2)) - this.wgs84.e2 / (1 - this.wgs84.e2 * Math.Pow(Math.Sin(Latp), 2));
+                f2 = 1.0 / (1 - Math.Pow(Math.Sin(Latp), 2)) - targetEllipsoid.e2 / (1 - targetEllipsoid.e2 * Math.Pow(Math.Sin(Latp), 2));
                 lat = Math.Asin(Math.Sin(Latp) - f1 / f2);
 
                 if (Math.Abs(lat - Latp) <= 0.0000000001)
@@ -555,7 +512,7 @@ namespace BojkoSoft.Transformations
             }
 
             // determine longitude
-            gama = Math.Atan((y - this.kks2005.Y0) / (R0 + x0 - x));
+            gama = Math.Atan((y - sourceProjection.Y0) / (R0 + x0 - x));
             lon = gama / Math.Sin(Lat0) + Lon0;
 
             resultPoint.X = lat / Math.PI * 180;
@@ -568,23 +525,28 @@ namespace BojkoSoft.Transformations
         /// Transforms Geographic coordinates (Latitude, Longitude - EPSG:4326) to projected - Northing, Easting (Lambert Conformal Conic Projection 2SP).
         /// </summary>
         /// <param name="inputPoint">Input coordinates</param>
+        /// <param name="outputProjection">Input coordinates</param>
+        /// <param name="inputEllipsoid">Input coordinates</param>
         /// <returns></returns>
-        public GeoPoint TransformGeographicToLambertProjected(GeoPoint inputPoint)
+        public GeoPoint TransformGeographicToLambertProjected(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_2005_KK, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
-            double Lon0 = (this.kks2005.Lon0 * Math.PI) / 180,
-                Lat1 = (this.kks2005.Lat1 * Math.PI) / 180,
-                Lat2 = (this.kks2005.Lat2 * Math.PI) / 180,
-                w1 = Helpers.CalculateWParameter(Lat1, this.wgs84.e2),
-                w2 = Helpers.CalculateWParameter(Lat2, this.wgs84.e2),
-                Q1 = Helpers.CalculateQParameter(Lat1, this.wgs84.e),
-                Q2 = Helpers.CalculateQParameter(Lat2, this.wgs84.e),
+            Projection targetProjection = this.projections[outputProjection];
+            Ellipsoid sourceEllipsoid = this.ellipsoids[inputEllipsoid];
+
+            double Lon0 = (targetProjection.Lon0 * Math.PI) / 180,
+                Lat1 = (targetProjection.Lat1 * Math.PI) / 180,
+                Lat2 = (targetProjection.Lat2 * Math.PI) / 180,
+                w1 = Helpers.CalculateWParameter((targetProjection.Lat1 * Math.PI) / 180, sourceEllipsoid.e2),
+                w2 = Helpers.CalculateWParameter((targetProjection.Lat2 * Math.PI) / 180, sourceEllipsoid.e2),
+                Q1 = Helpers.CalculateQParameter((targetProjection.Lat1 * Math.PI) / 180, sourceEllipsoid.e),
+                Q2 = Helpers.CalculateQParameter((targetProjection.Lat2 * Math.PI) / 180, sourceEllipsoid.e),
                 Lat0 = Math.Asin(Math.Log((w2 * Math.Cos(Lat1)) / (w1 * Math.Cos(Lat2))) / (Q2 - Q1)),
-                Q0 = Helpers.CalculateQParameter(Lat0, this.wgs84.e),
-                Re = (this.wgs84.a * Math.Cos(Lat1) * Math.Exp(Q1 * Math.Sin(Lat0))) / w1 / Math.Sin(Lat0),
+                Q0 = Helpers.CalculateQParameter(Lat0, sourceEllipsoid.e),
+                Re = (sourceEllipsoid.a * Math.Cos(Lat1) * Math.Exp(Q1 * Math.Sin(Lat0))) / w1 / Math.Sin(Lat0),
                 R0 = Re / Math.Exp(Q0 * Math.Sin(Lat0)),
-                x0 = Helpers.CalculateCentralPointX(Lat0, this.wgs84.a, this.wgs84.e2);
+                x0 = Helpers.CalculateCentralPointX(Lat0, sourceEllipsoid.a, sourceEllipsoid.e2);
 
             double R = 0.0,
                 Q = 0.0,
@@ -593,7 +555,7 @@ namespace BojkoSoft.Transformations
                 lon = (inputPoint.Y * Math.PI) / 180;
 
             double A = Math.Log((1 + Math.Sin(lat)) / (1 - Math.Sin(lat))),
-              B = this.wgs84.e * Math.Log((1 + this.wgs84.e * Math.Sin(lat)) / (1 - this.wgs84.e * Math.Sin(lat)));
+              B = sourceEllipsoid.e * Math.Log((1 + sourceEllipsoid.e * Math.Sin(lat)) / (1 - sourceEllipsoid.e * Math.Sin(lat)));
 
             Q = (A - B) / 2;
             R = Re / Math.Exp(Q * Math.Sin(Lat0));
@@ -601,7 +563,7 @@ namespace BojkoSoft.Transformations
             gama = (lon - Lon0) * Math.Sin(Lat0);
 
             resultPoint.X = R0 + x0 - R * Math.Cos(gama);
-            resultPoint.Y = this.kks2005.Y0 + R * Math.Sin(gama);
+            resultPoint.Y = targetProjection.Y0 + R * Math.Sin(gama);
 
             return resultPoint;
         }
@@ -622,7 +584,7 @@ namespace BojkoSoft.Transformations
 
             double latitude = inputPoint.X,
               longitude = inputPoint.Y,
-              halfRadius = Math.PI * this.sphere.a;
+              halfRadius = Math.PI * this.ellipsoids[enumEllipsoids.SPHERE].a;
 
             resultPoint.X = (longitude * halfRadius) / 180;
             resultPoint.Y = Math.Log(Math.Tan(((90 + latitude) * Math.PI) / 360)) / (Math.PI / 180);
@@ -643,7 +605,7 @@ namespace BojkoSoft.Transformations
 
             double x = inputPoint.Y,
                 y = inputPoint.X,
-                halfRadius = Math.PI * this.sphere.a;
+                halfRadius = Math.PI * this.ellipsoids[enumEllipsoids.SPHERE].a;
 
 
             resultPoint.X = (x / halfRadius) * 180;

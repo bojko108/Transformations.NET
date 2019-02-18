@@ -1,17 +1,9 @@
 ﻿using System;
 
-namespace BojkoSoft.Transformations.Ellipsoids
+namespace BojkoSoft.Transformations.Constants
 {
     /// <summary>
-    /// Represents ellipsoids.
-    /// Parameters are calculated as follows:
-    /// f = (a - b) / a
-    /// invFlatt = 1 / f
-    /// b = a * (1 - f)
-    /// n = (a - b) / (a + b)
-    /// e2 = (Math.pow(a, 2) - Math.pow(b, 2)) / (Math.pow(a, 2)))
-    /// e = Math.sqrt(e2)
-    /// ep2 = Math.sqrt((Math.pow(a, 2) - Math.pow(b, 2)) / (Math.pow(b, 2))))
+    /// Class for creating an ellipsoid
     /// </summary>
     public class Ellipsoid
     {
@@ -23,6 +15,18 @@ namespace BojkoSoft.Transformations.Ellipsoids
         /// semi minor axis
         /// </summary>
         public double b { get; private set; }
+        /// <summary>
+        /// flattening
+        /// </summary>
+        public double f { get; private set; }
+        /// <summary>
+        /// inverse flattening
+        /// </summary>
+        public double invFlatt { get; private set; }
+        /// <summary>
+        /// nnnnnnnnnnn
+        /// </summary>
+        public double n { get; private set; }
         /// <summary>
         /// first eccentricity
         /// </summary>
@@ -45,6 +49,10 @@ namespace BojkoSoft.Transformations.Ellipsoids
         {
             this.a = a;
             this.b = b;
+
+            this.f = (this.a - this.b) / this.a;
+            this.invFlatt = 1.0 / this.f;
+            this.n = (this.a - this.b) / (this.a + this.b);
             this.e2 = (Math.Pow(this.a, 2.0) - Math.Pow(this.b, 2.0)) / Math.Pow(this.a, 2.0);
             this.e = Math.Sqrt(this.e2);
             this.ep2 = (Math.Pow(this.a, 2.0) - Math.Pow(this.b, 2.0)) / Math.Pow(this.b, 2.0);

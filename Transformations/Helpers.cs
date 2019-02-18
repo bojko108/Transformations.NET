@@ -11,7 +11,7 @@ namespace BojkoSoft.Transformations
         /// <summary>
         /// Calculates distance from the equator to the specified Latitude.
         /// </summary>
-        /// <param name="Latitude">base latitude value in radians</param>
+        /// <param name="latitude">base latitude value in radians</param>
         /// <returns></returns>
         public static double ArcLengthOfMeridian(double latitude, double a, double b)
         {
