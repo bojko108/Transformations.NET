@@ -9,9 +9,31 @@ namespace BojkoSoft.Transformations
     public static class Helpers
     {
         /// <summary>
+        /// transforms value to radians
+        /// </summary>
+        /// <param name="degrees">value in degrees</param>
+        /// <returns>value in radians</returns>
+        public static double ToRad(this double degrees)
+        {
+            return degrees * Math.PI / 180;
+        }
+
+        /// <summary>
+        /// transforms value to degrees
+        /// </summary>
+        /// <param name="radians">value in radians</param>
+        /// <returns>value in degrees</returns>
+        public static double ToDeg(this double radians)
+        {
+            return radians * 180 / Math.PI;
+        }
+
+        /// <summary>
         /// Calculates distance from the equator to the specified Latitude.
         /// </summary>
         /// <param name="latitude">base latitude value in radians</param>
+        /// <param name="a">ellipsoid's semi major axis</param>
+        /// <param name="b">ellipsoid's semi minor axis</param>
         /// <returns></returns>
         public static double ArcLengthOfMeridian(double latitude, double a, double b)
         {
@@ -34,6 +56,8 @@ namespace BojkoSoft.Transformations
         /// Calculates base latitude from x coordinate of a point
         /// </summary>
         /// <param name="x">distance from the equator in meters</param>
+        /// <param name="a">ellipsoid's semi major axis</param>
+        /// <param name="b">ellipsoid's semi minor axis</param>
         /// <returns></returns>
         public static double FootpointLatitude(double x, double a, double b)
         {
@@ -53,11 +77,22 @@ namespace BojkoSoft.Transformations
                 + (epsilon_ * Math.Sin(8.0 * x_));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="latitude"></param>
+        /// <param name="e2"></param>
+        /// <returns></returns>
         public static double CalculateWParameter(double latitude, double e2)
         {
             return Math.Sqrt(1 - e2 * Math.Pow(Math.Sin(latitude), 2));
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="latitude"></param>
+        /// <param name="e"></param>
+        /// <returns></returns>
         public static double CalculateQParameter(double latitude, double e)
         {
             return (
@@ -66,7 +101,13 @@ namespace BojkoSoft.Transformations
                 e * Math.Log((1 + e * Math.Sin(latitude)) / (1 - e * Math.Sin(latitude))))
             );
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lat0"></param>
+        /// <param name="a"></param>
+        /// <param name="e2"></param>
+        /// <returns></returns>
         public static double CalculateCentralPointX(double lat0, double a, double e2)
         {
             double m0 = a * (1 - e2),

@@ -18,6 +18,9 @@ namespace BojkoSoft.Transformations.ControlPoints
         /// </summary>
         public static Dictionary<string, string> dicMapList { get; private set; }
 
+        /// <summary>
+        /// Loads all control poins
+        /// </summary>
         public static void LoadControlPoints()
         {
             dicMapList = new Dictionary<string, string>();

@@ -1,5 +1,4 @@
-﻿using BojkoSoft.Transformations;
-using System;
+﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using BojkoSoft.Transformations.Constants;
@@ -11,8 +10,8 @@ namespace BojkoSoft.Transformations.Tests
     {
         private Transformations tr;
 
-        private double deltaInMeters = 0.2;             // 20cm - precision for 1970 is around 50cm
-        private double deltaInDegrees = 0.0000001;
+        private readonly double deltaInMeters = 0.2;             // 20cm - precision for BGS 1970 is around 50cm
+        private readonly double deltaInDegrees = 0.0000001;
 
         public TransformationsTests()
         {
