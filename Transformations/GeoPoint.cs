@@ -23,11 +23,15 @@ namespace BojkoSoft.Transformations
         /// - KC1970: represents x
         /// </summary>
         public double Y { get; set; }
+        /// <summary>
+        /// Z coordinate of a point
+        /// </summary>
+        public double Z { get; set; }
 
         /// <summary>
-        /// Create a new Point with 0, 0 coordinates
+        /// Create a new Point with (0, 0, 0) coordinates
         /// </summary>
-        public GeoPoint() : this(0.0, 0.0) { }
+        public GeoPoint() : this(0.0, 0.0, 0.0) { }
 
         /// <summary>
         /// Create a new Point
@@ -42,15 +46,37 @@ namespace BojkoSoft.Transformations
         /// - UTM: represents northing
         /// - KC1970: represents x
         /// </param>
-        public GeoPoint(double x, double y)
+        public GeoPoint(double x, double y) : this(x, y, 0.0) { }
+
+        /// <summary>
+        /// Create a new Point
+        /// </summary>
+        /// <param name="x">X coordiante of a point. The value has different meaning in different coordinate systems:
+        /// - WGS84: represents latitude
+        /// - UTM: represents northing
+        /// - KC1970: represents x
+        /// </param>
+        /// <param name="y">Y coordinate of a point. The value has different meaning in different coordinate systems:
+        /// - WGS84: represents latitude
+        /// - UTM: represents northing
+        /// - KC1970: represents x
+        /// </param>
+        /// <param name="z">Z coordinate of a point
+        /// </param>
+        public GeoPoint(double x, double y, double z)
         {
             this.X = x;
             this.Y = y;
+            this.Z = z;
         }
-        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
-            return String.Format("X: {0}, Y: {1}", this.X, this.Y);
+            return String.Format("X: {0}, Y: {1}, Z:{2}", this.X, this.Y, this.Z);
         }
     }
 }

@@ -19,6 +19,26 @@ namespace BojkoSoft.Transformations.Tests
             this.tr = new Transformations();
         }
 
+        public void CheckResults(GeoPoint expected, GeoPoint result, double delta, bool checkZ = false)
+        {
+            double deltaX = Math.Abs(expected.X - result.X);
+            Assert.IsTrue(deltaX <= delta, "Latitude, Northing or X is not calculated correctly");
+
+            double deltaY = Math.Abs(expected.Y - result.Y);
+            Assert.IsTrue(deltaY <= delta, "Longitude, Easting or Y is not calculated correctly");
+
+            if (checkZ)
+            {
+                double deltaZ = Math.Abs(expected.Z - result.Z);
+                Assert.IsTrue(deltaZ <= delta, "H, N or Z is not calculated correctly");
+                Console.WriteLine(String.Format("expected: {0}\nreceived: {1}\ndeltaX: {2}\ndeltaY: {3}\ndeltaZ: {4}", expected.ToString(), result.ToString(), deltaX, deltaY, deltaZ));
+            }
+            else
+            {
+                Console.WriteLine(String.Format("expected: {0}\nreceived: {1}\ndeltaX: {2}\ndeltaY: {3}", expected.ToString(), result.ToString(), deltaX.ToString(), deltaY.ToString()));
+            }
+        }
+
         [TestMethod()]
         public void TransformLambertToUTMTest()
         {
@@ -26,16 +46,10 @@ namespace BojkoSoft.Transformations.Tests
             GeoPoint expected = new GeoPoint(4702270.179, 314955.869);
 
             // go from Lambert to Geographic and then to UTM
-            GeoPoint result = this.tr.TransformLambertProjectedToGeographic(input);
+            GeoPoint result = this.tr.TransformLambertToGeographic(input);
             result = this.tr.TransformGeographicToUTM(result);
 
-            double deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "Northing is not calculated correctly");
-
-            double deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "Easting is not calculated correctly");
-
-            Console.WriteLine(String.Format("expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
+            this.CheckResults(expected, result, this.deltaInMeters);
         }
 
         [TestMethod()]
@@ -43,16 +57,9 @@ namespace BojkoSoft.Transformations.Tests
         {
             GeoPoint input = new GeoPoint(42.450682, 24.749747);
             GeoPoint expected = new GeoPoint(4702270.179, 314955.869);
-
             GeoPoint result = this.tr.TransformGeographicToUTM(input);
 
-            double deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "Northing is not calculated correctly");
-
-            double deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "Easting is not calculated correctly");
-
-            Console.WriteLine(String.Format("expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
+            this.CheckResults(expected, result, this.deltaInMeters);
         }
 
         [TestMethod()]
@@ -60,16 +67,29 @@ namespace BojkoSoft.Transformations.Tests
         {
             GeoPoint input = new GeoPoint(4702270.179, 314955.869);
             GeoPoint expected = new GeoPoint(42.450682, 24.749747);
-
             GeoPoint result = this.tr.TransformUTMToGeographic(input);
 
-            double deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInDegrees, "Latitude is not calculated correctly");
+            this.CheckResults(expected, result, this.deltaInDegrees);
+        }
 
-            double deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInDegrees, "Longitude is not calculated correctly");
+        [TestMethod()]
+        public void TransformGeographicToGaussTest()
+        {
+            GeoPoint input = new GeoPoint(42.7602978166667, 25.3824052611111);
+            GeoPoint expected = new GeoPoint(4736629.503, 8613154.6069);
+            GeoPoint result = this.tr.TransformGeographicToGauss(input);
 
-            Console.WriteLine(String.Format("expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
+            this.CheckResults(expected, result, this.deltaInMeters);
+        }
+
+        [TestMethod()]
+        public void TransformGaussToGeographicTest()
+        {
+            GeoPoint input = new GeoPoint(4736629.503, 8613154.6069);
+            GeoPoint expected = new GeoPoint(42.7602978166667, 25.3824052611111);
+            GeoPoint result = this.tr.TransformGaussToGeographic(input);
+
+            this.CheckResults(expected, result, this.deltaInDegrees);
         }
 
         [TestMethod()]
@@ -78,64 +98,26 @@ namespace BojkoSoft.Transformations.Tests
             // K3
             GeoPoint input = new GeoPoint(4738563.049, 8496424.783);
             GeoPoint expected = new GeoPoint(4832666.465, 192546.481);
-
             GeoPoint result = this.tr.Transform1970ToUTM(input, enumProjections.BGS_1970_К3);
-
-            double deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "K3 Northing is not calculated correctly");
-
-            double deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "K3 Easting is not calculated correctly");
-
-            Console.WriteLine(String.Format("K3 expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
-
+            this.CheckResults(expected, result, this.deltaInMeters);
 
             // K5
             input = new GeoPoint(4601646.686, 9492261.737);
             expected = new GeoPoint(4665836.785, 444734.294);
-
             result = this.tr.Transform1970ToUTM(input, enumProjections.BGS_1970_К5);
-
-            deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "K5 Northing is not calculated correctly");
-
-            deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "K5 Easting is not calculated correctly");
-
-            Console.WriteLine(String.Format("K5 expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
-
+            this.CheckResults(expected, result, this.deltaInMeters);
 
             // K7
             input = new GeoPoint(4727661.403, 9563268.559);
             expected = new GeoPoint(4826823.258, 497499.587);
-
             result = this.tr.Transform1970ToUTM(input, enumProjections.BGS_1970_К7);
-
-            deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "K7 Northing is not calculated correctly");
-
-            deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "K7 Easting is not calculated correctly");
-
-            Console.WriteLine(String.Format("K7 expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
-
+            this.CheckResults(expected, result, this.deltaInMeters);
 
             // K9
             input = new GeoPoint(4577015.806, 8615896.123);
             expected = new GeoPoint(4702270.179, 314955.869);
-
             result = this.tr.Transform1970ToUTM(input, enumProjections.BGS_1970_К9);
-
-            deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "K9 Northing is not calculated correctly");
-
-            deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "K9 Easting is not calculated correctly");
-
-            Console.WriteLine(String.Format("K9 expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
-
-
-
+            this.CheckResults(expected, result, this.deltaInMeters);
         }
 
         [TestMethod()]
@@ -144,61 +126,26 @@ namespace BojkoSoft.Transformations.Tests
             // K3
             GeoPoint input = new GeoPoint(4832666.465, 192546.481);
             GeoPoint expected = new GeoPoint(4738563.049, 8496424.783);
-
             GeoPoint result = this.tr.TransformUTMTo1970(input);
-
-            double deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "K3 X is not calculated correctly");
-
-            double deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "K3 Y is not calculated correctly");
-
-            Console.WriteLine(String.Format("K3 expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
-
+            this.CheckResults(expected, result, this.deltaInMeters);
 
             // K5
             input = new GeoPoint(4665836.785, 444734.294);
             expected = new GeoPoint(4601646.686, 9492261.737);
-
             result = this.tr.TransformUTMTo1970(input);
-
-            deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "K5 X is not calculated correctly");
-
-            deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "K5 Y is not calculated correctly");
-
-            Console.WriteLine(String.Format("K5 expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
-
+            this.CheckResults(expected, result, this.deltaInMeters);
 
             // K7
             input = new GeoPoint(4826823.258, 497499.587);
             expected = new GeoPoint(4727661.403, 9563268.559);
-
             result = this.tr.TransformUTMTo1970(input);
-
-            deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "K7 X is not calculated correctly");
-
-            deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "K7 Y is not calculated correctly");
-
-            Console.WriteLine(String.Format("K7 expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
-
+            this.CheckResults(expected, result, this.deltaInMeters);
 
             // K9
             input = new GeoPoint(4702270.179, 314955.869);
             expected = new GeoPoint(4577015.806, 8615896.123);
-
             result = this.tr.TransformUTMTo1970(input);
-
-            deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "K9 X is not calculated correctly");
-
-            deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "K9 Y is not calculated correctly");
-
-            Console.WriteLine(String.Format("K9 expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
+            this.CheckResults(expected, result, this.deltaInMeters);
         }
 
         [TestMethod()]
@@ -206,16 +153,8 @@ namespace BojkoSoft.Transformations.Tests
         {
             GeoPoint input = new GeoPoint(42.7589996, 25.3799991);
             GeoPoint expected = new GeoPoint(4735953.349, 490177.508);
-
-            GeoPoint result = this.tr.TransformGeographicToLambertProjected(input);
-
-            double deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "Northing is not calculated correctly");
-
-            double deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "Easting is not calculated correctly");
-
-            Console.WriteLine(String.Format("expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
+            GeoPoint result = this.tr.TransformGeographicToLambert(input);
+            this.CheckResults(expected, result, this.deltaInMeters);
         }
 
         [TestMethod()]
@@ -223,16 +162,26 @@ namespace BojkoSoft.Transformations.Tests
         {
             GeoPoint input = new GeoPoint(4735953.349, 490177.508);
             GeoPoint expected = new GeoPoint(42.7589996, 25.3799991);
+            GeoPoint result = this.tr.TransformLambertToGeographic(input);
+            this.CheckResults(expected, result, this.deltaInDegrees);
+        }
 
-            GeoPoint result = this.tr.TransformLambertProjectedToGeographic(input);
+        [TestMethod()]
+        public void TransformGeographicToGeocentricTest()
+        {
+            GeoPoint input = new GeoPoint(42.450682, 24.749747);
+            GeoPoint expected = new GeoPoint(4280410.654, 1973273.422, 4282674.061);
+            GeoPoint result = this.tr.TransformGeographicToGeocentric(input);
+            this.CheckResults(expected, result, this.deltaInMeters, true);
+        }
 
-            double deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInDegrees, "Latitude is not calculated correctly");
-
-            double deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInDegrees, "Longitude is not calculated correctly");
-
-            Console.WriteLine(String.Format("expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
+        [TestMethod()]
+        public void TransformGeocentricToGeographicTest()
+        {
+            GeoPoint input = new GeoPoint(4280410.654, 1973273.422, 4282674.061);
+            GeoPoint expected = new GeoPoint(42.450682, 24.749747);
+            GeoPoint result = this.tr.TransformGeocentricToGeographic(input);
+            this.CheckResults(expected, result, this.deltaInMeters, true);
         }
 
         [TestMethod()]
@@ -240,16 +189,8 @@ namespace BojkoSoft.Transformations.Tests
         {
             GeoPoint input = new GeoPoint(42.450682, 24.749747);
             GeoPoint expected = new GeoPoint(2755129.23, 5228730.33);
-
             GeoPoint result = this.tr.TransformGeographicToWebMercator(input);
-
-            double deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInMeters, "X is not calculated correctly");
-
-            double deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInMeters, "Y is not calculated correctly");
-
-            Console.WriteLine(String.Format("expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
+            this.CheckResults(expected, result, this.deltaInMeters);
         }
 
         [TestMethod()]
@@ -257,16 +198,8 @@ namespace BojkoSoft.Transformations.Tests
         {
             GeoPoint input = new GeoPoint(2755129.23, 5228730.33);
             GeoPoint expected = new GeoPoint(42.450682, 24.749747);
-
             GeoPoint result = this.tr.TransformWebMercatorToGeographic(input);
-
-            double deltaX = Math.Abs(expected.X - result.X);
-            Assert.IsTrue(deltaX <= this.deltaInDegrees, "Latitude is not calculated correctly");
-
-            double deltaY = Math.Abs(expected.Y - result.Y);
-            Assert.IsTrue(deltaY <= this.deltaInDegrees, "Longitude is not calculated correctly");
-
-            Console.WriteLine(String.Format("expected: {0}\nreceived: {1}, deltaX: {2}, deltaY: {3}", expected.ToString(), result.ToString(), deltaX, deltaY));
+            this.CheckResults(expected, result, this.deltaInDegrees);
         }
 
         [TestMethod()]

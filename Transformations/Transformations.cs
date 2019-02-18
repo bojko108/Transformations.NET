@@ -40,129 +40,24 @@ namespace BojkoSoft.Transformations
         /// Transforms geographic coordinates (Latitude, Longitude - EPSG:4326) to projected - Northing, Easting (UTM).
         /// </summary>
         /// <param name="inputPoint">Input point</param>
-        /// <param name="targetUtmProjection">Target UTM projection</param>
+        /// <param name="outputUtmProjection">Target UTM projection</param>
         /// <param name="inputEllipsoid">Input point ellipsod</param>
         /// <returns></returns>
-        public GeoPoint TransformGeographicToUTM(GeoPoint inputPoint, enumProjections targetUtmProjection = enumProjections.UTM35N, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeographicToUTM(GeoPoint inputPoint, enumProjections outputUtmProjection = enumProjections.UTM35N, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
         {
-            GeoPoint resultPoint = new GeoPoint();
-
-            inputPoint.X = (inputPoint.X * Math.PI) / 180;
-            inputPoint.Y = (inputPoint.Y * Math.PI) / 180;
-
-            Projection targetProjection = this.projections[targetUtmProjection];
-            Ellipsoid sourceEllipsoid = this.ellipsoids[inputEllipsoid];
-
-            double n, nu2, t, t2, l,
-                coef13, coef14, coef15, coef16,
-                coef17, coef18, cf;
-            double phi;
-
-            phi = Helpers.ArcLengthOfMeridian(inputPoint.X, sourceEllipsoid.a, sourceEllipsoid.b);
-            cf = Math.Cos(inputPoint.X);
-            nu2 = sourceEllipsoid.ep2 * Math.Pow(Math.Cos(inputPoint.X), 2.0);
-            n = Math.Pow(sourceEllipsoid.a, 2.0) / (sourceEllipsoid.b * Math.Sqrt(1 + nu2));
-            t = Math.Tan(inputPoint.X);
-            t2 = t * t;
-
-            l = inputPoint.Y - (targetProjection.Lon0 * Math.PI) / 180;
-
-            coef13 = 1.0 - t2 + nu2;
-            coef14 = 5.0 - t2 + 9 * nu2 + 4.0 * (nu2 * nu2);
-            coef15 = 5.0 - 18.0 * t2 + (t2 * t2) + 14.0 * nu2 - 58.0 * t2 * nu2;
-            coef16 = 61.0 - 58.0 * t2 + (t2 * t2) + 270.0 * nu2 - 330.0 * t2 * nu2;
-            coef17 = 61.0 - 479.0 * t2 + 179.0 * (t2 * t2) - (t2 * t2 * t2);
-            coef18 = 1385.0 - 3111.0 * t2 + 543.0 * (t2 * t2) - (t2 * t2 * t2);
-
-            resultPoint.Y = n * Math.Cos(inputPoint.X) * l
-                + (n / 6.0 * Math.Pow(Math.Cos(inputPoint.X), 3.0) * coef13 * Math.Pow(l, 3.0))
-                + (n / 120.0 * Math.Pow(Math.Cos(inputPoint.X), 5.0) * coef15 * Math.Pow(l, 5.0))
-                + (n / 5040.0 * Math.Pow(Math.Cos(inputPoint.X), 7.0) * coef17 * Math.Pow(l, 7.0));
-
-            resultPoint.X = phi
-                + (t / 2.0 * n * Math.Pow(Math.Cos(inputPoint.X), 2.0) * Math.Pow(l, 2.0))
-                + (t / 24.0 * n * Math.Pow(Math.Cos(inputPoint.X), 4.0) * coef14 * Math.Pow(l, 4.0))
-                + (t / 720.0 * n * Math.Pow(Math.Cos(inputPoint.X), 6.0) * coef16 * Math.Pow(l, 6.0))
-                + (t / 40320.0 * n * Math.Pow(Math.Cos(inputPoint.X), 8.0) * coef18 * Math.Pow(l, 8.0));
-
-            resultPoint.X *= targetProjection.Scale;
-            resultPoint.Y *= targetProjection.Scale;
-            resultPoint.Y += targetProjection.Y0;
-
-            return resultPoint;
+            return this.TransformGeographicToGauss(inputPoint, outputUtmProjection, inputEllipsoid);
         }
 
         /// <summary>
         /// Transforms projected coordinates (Northing, Easting - UTM) to geographic - Latitude, Longitude (EPSG:4326).
         /// </summary>
         /// <param name="inputPoint">Input point</param>
-        /// <param name="sourceUtmProjection">Input point projection</param>
+        /// <param name="inputUtmProjection">Input point projection</param>
         /// <param name="outputEllipsoid">Output ellipsoid</param>
         /// <returns></returns>
-        public GeoPoint TransformUTMToGeographic(GeoPoint inputPoint, enumProjections sourceUtmProjection = enumProjections.UTM35N, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformUTMToGeographic(GeoPoint inputPoint, enumProjections inputUtmProjection = enumProjections.UTM35N, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
         {
-            GeoPoint resultPoint = new GeoPoint();
-
-            Projection sourceProjection = this.projections[sourceUtmProjection];
-            Ellipsoid targetEllipsoid = this.ellipsoids[outputEllipsoid];
-
-            inputPoint.Y -= sourceProjection.Y0;
-            inputPoint.Y /= sourceProjection.Scale;
-            inputPoint.X /= sourceProjection.Scale;
-
-            double phif, Nf, Nfpow, nuf2, tf, tf2, tf4, cf, x1frac, x2frac,
-                x3frac, x4frac, x5frac, x6frac, x7frac, x8frac, x2poly,
-                x3poly, x4poly, x5poly, x6poly, x7poly, x8poly;
-
-            phif = Helpers.FootpointLatitude(inputPoint.X, targetEllipsoid.a, targetEllipsoid.b);
-
-            cf = Math.Cos(phif);
-            nuf2 = targetEllipsoid.ep2 * Math.Pow(cf, 2.0);
-            Nf = Math.Pow(targetEllipsoid.a, 2.0) / (targetEllipsoid.b * Math.Sqrt(1 + nuf2));
-            Nfpow = Nf;
-            tf = Math.Tan(phif);
-            tf2 = tf * tf;
-            tf4 = tf2 * tf2;
-            x1frac = 1.0 / (Nfpow * cf);
-            Nfpow *= Nf;
-            x2frac = tf / (2.0 * Nfpow);
-            Nfpow *= Nf;
-            x3frac = 1.0 / (6.0 * Nfpow * cf);
-            Nfpow *= Nf;
-            x4frac = tf / (24.0 * Nfpow);
-            Nfpow *= Nf;
-            x5frac = 1.0 / (120.0 * Nfpow * cf);
-            Nfpow *= Nf;
-            x6frac = tf / (720.0 * Nfpow);
-            Nfpow *= Nf;
-            x7frac = 1.0 / (5040.0 * Nfpow * cf);
-            Nfpow *= Nf;
-            x8frac = tf / (40320.0 * Nfpow);
-
-            x2poly = -1 - nuf2;
-            x3poly = -1 - 2 * tf2 - nuf2;
-            x4poly = 5.0 + 3.0 * tf2 + 6.0 * nuf2 - 6.0 * tf2 * nuf2 - 3.0 * (nuf2 * nuf2) - 9.0 * tf2 * (nuf2 * nuf2);
-            x5poly = 5.0 + 28.0 * tf2 + 24.0 * tf4 + 6.0 * nuf2 + 8.0 * tf2 * nuf2;
-            x6poly = -61.0 - 90.0 * tf2 - 45.0 * tf4 - 107.0 * nuf2 + 162.0 * tf2 * nuf2;
-            x7poly = -61.0 - 662.0 * tf2 - 1320.0 * tf4 - 720.0 * (tf4 * tf2);
-            x8poly = 1385.0 + 3633.0 * tf2 + 4095.0 * tf4 + 1575 * (tf4 * tf2);
-
-            resultPoint.X = phif
-                + x2frac * x2poly * (Math.Pow(inputPoint.Y, 2))
-                + x4frac * x4poly * Math.Pow(inputPoint.Y, 4.0)
-                + x6frac * x6poly * Math.Pow(inputPoint.Y, 6.0)
-                + x8frac * x8poly * Math.Pow(inputPoint.Y, 8.0);
-
-            resultPoint.Y = ((sourceProjection.Lon0 * Math.PI) / 180)
-                + x1frac * inputPoint.Y
-                + x3frac * x3poly * Math.Pow(inputPoint.Y, 3.0)
-                + x5frac * x5poly * Math.Pow(inputPoint.Y, 5.0)
-                + x7frac * x7poly * Math.Pow(inputPoint.Y, 7.0);
-
-            resultPoint.X = resultPoint.X / Math.PI * 180;
-            resultPoint.Y = resultPoint.Y / Math.PI * 180;
-
-            return resultPoint;
+            return this.TransformGaussToGeographic(inputPoint, inputUtmProjection, outputEllipsoid);
         }
 
         #endregion
@@ -446,6 +341,188 @@ namespace BojkoSoft.Transformations
         #endregion
 
 
+        #region GAUSS AND GEOGRAPHIC
+
+        public GeoPoint TransformGeographicToGauss(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_1930_24, enumEllipsoids inputEllipsoid = enumEllipsoids.HAYFORD)
+        {
+            GeoPoint resultPoint = new GeoPoint();
+
+            inputPoint.X = (inputPoint.X * Math.PI) / 180;
+            inputPoint.Y = (inputPoint.Y * Math.PI) / 180;
+
+            Projection targetProjection = this.projections[outputProjection];
+            Ellipsoid sourceEllipsoid = this.ellipsoids[inputEllipsoid];
+
+            double n, nu2, t, t2, l,
+                coef13, coef14, coef15, coef16,
+                coef17, coef18, cf;
+            double phi;
+
+            phi = Helpers.ArcLengthOfMeridian(inputPoint.X, sourceEllipsoid.a, sourceEllipsoid.b);
+            cf = Math.Cos(inputPoint.X);
+            nu2 = sourceEllipsoid.ep2 * Math.Pow(Math.Cos(inputPoint.X), 2.0);
+            n = Math.Pow(sourceEllipsoid.a, 2.0) / (sourceEllipsoid.b * Math.Sqrt(1 + nu2));
+            t = Math.Tan(inputPoint.X);
+            t2 = t * t;
+
+            l = inputPoint.Y - (targetProjection.Lon0 * Math.PI) / 180;
+
+            coef13 = 1.0 - t2 + nu2;
+            coef14 = 5.0 - t2 + 9 * nu2 + 4.0 * (nu2 * nu2);
+            coef15 = 5.0 - 18.0 * t2 + (t2 * t2) + 14.0 * nu2 - 58.0 * t2 * nu2;
+            coef16 = 61.0 - 58.0 * t2 + (t2 * t2) + 270.0 * nu2 - 330.0 * t2 * nu2;
+            coef17 = 61.0 - 479.0 * t2 + 179.0 * (t2 * t2) - (t2 * t2 * t2);
+            coef18 = 1385.0 - 3111.0 * t2 + 543.0 * (t2 * t2) - (t2 * t2 * t2);
+
+            resultPoint.Y = n * Math.Cos(inputPoint.X) * l
+                + (n / 6.0 * Math.Pow(Math.Cos(inputPoint.X), 3.0) * coef13 * Math.Pow(l, 3.0))
+                + (n / 120.0 * Math.Pow(Math.Cos(inputPoint.X), 5.0) * coef15 * Math.Pow(l, 5.0))
+                + (n / 5040.0 * Math.Pow(Math.Cos(inputPoint.X), 7.0) * coef17 * Math.Pow(l, 7.0));
+
+            resultPoint.X = phi
+                + (t / 2.0 * n * Math.Pow(Math.Cos(inputPoint.X), 2.0) * Math.Pow(l, 2.0))
+                + (t / 24.0 * n * Math.Pow(Math.Cos(inputPoint.X), 4.0) * coef14 * Math.Pow(l, 4.0))
+                + (t / 720.0 * n * Math.Pow(Math.Cos(inputPoint.X), 6.0) * coef16 * Math.Pow(l, 6.0))
+                + (t / 40320.0 * n * Math.Pow(Math.Cos(inputPoint.X), 8.0) * coef18 * Math.Pow(l, 8.0));
+
+            resultPoint.X *= targetProjection.Scale;
+            resultPoint.Y *= targetProjection.Scale;
+            resultPoint.Y += targetProjection.Y0;
+
+            return resultPoint;
+        }
+
+        public GeoPoint TransformGaussToGeographic(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_1930_24, enumEllipsoids outputEllipsoid = enumEllipsoids.HAYFORD)
+        {
+            GeoPoint resultPoint = new GeoPoint();
+
+            Projection sourceProjection = this.projections[inputProjection];
+            Ellipsoid targetEllipsoid = this.ellipsoids[outputEllipsoid];
+
+            inputPoint.Y -= sourceProjection.Y0;
+            inputPoint.Y /= sourceProjection.Scale;
+            inputPoint.X /= sourceProjection.Scale;
+
+            double phif, Nf, Nfpow, nuf2, tf, tf2, tf4, cf, x1frac, x2frac,
+                x3frac, x4frac, x5frac, x6frac, x7frac, x8frac, x2poly,
+                x3poly, x4poly, x5poly, x6poly, x7poly, x8poly;
+
+            phif = Helpers.FootpointLatitude(inputPoint.X, targetEllipsoid.a, targetEllipsoid.b);
+
+            cf = Math.Cos(phif);
+            nuf2 = targetEllipsoid.ep2 * Math.Pow(cf, 2.0);
+            Nf = Math.Pow(targetEllipsoid.a, 2.0) / (targetEllipsoid.b * Math.Sqrt(1 + nuf2));
+            Nfpow = Nf;
+            tf = Math.Tan(phif);
+            tf2 = tf * tf;
+            tf4 = tf2 * tf2;
+            x1frac = 1.0 / (Nfpow * cf);
+            Nfpow *= Nf;
+            x2frac = tf / (2.0 * Nfpow);
+            Nfpow *= Nf;
+            x3frac = 1.0 / (6.0 * Nfpow * cf);
+            Nfpow *= Nf;
+            x4frac = tf / (24.0 * Nfpow);
+            Nfpow *= Nf;
+            x5frac = 1.0 / (120.0 * Nfpow * cf);
+            Nfpow *= Nf;
+            x6frac = tf / (720.0 * Nfpow);
+            Nfpow *= Nf;
+            x7frac = 1.0 / (5040.0 * Nfpow * cf);
+            Nfpow *= Nf;
+            x8frac = tf / (40320.0 * Nfpow);
+
+            x2poly = -1 - nuf2;
+            x3poly = -1 - 2 * tf2 - nuf2;
+            x4poly = 5.0 + 3.0 * tf2 + 6.0 * nuf2 - 6.0 * tf2 * nuf2 - 3.0 * (nuf2 * nuf2) - 9.0 * tf2 * (nuf2 * nuf2);
+            x5poly = 5.0 + 28.0 * tf2 + 24.0 * tf4 + 6.0 * nuf2 + 8.0 * tf2 * nuf2;
+            x6poly = -61.0 - 90.0 * tf2 - 45.0 * tf4 - 107.0 * nuf2 + 162.0 * tf2 * nuf2;
+            x7poly = -61.0 - 662.0 * tf2 - 1320.0 * tf4 - 720.0 * (tf4 * tf2);
+            x8poly = 1385.0 + 3633.0 * tf2 + 4095.0 * tf4 + 1575 * (tf4 * tf2);
+
+            resultPoint.X = phif
+                + x2frac * x2poly * (Math.Pow(inputPoint.Y, 2))
+                + x4frac * x4poly * Math.Pow(inputPoint.Y, 4.0)
+                + x6frac * x6poly * Math.Pow(inputPoint.Y, 6.0)
+                + x8frac * x8poly * Math.Pow(inputPoint.Y, 8.0);
+
+            resultPoint.Y = ((sourceProjection.Lon0 * Math.PI) / 180)
+                + x1frac * inputPoint.Y
+                + x3frac * x3poly * Math.Pow(inputPoint.Y, 3.0)
+                + x5frac * x5poly * Math.Pow(inputPoint.Y, 5.0)
+                + x7frac * x7poly * Math.Pow(inputPoint.Y, 7.0);
+
+            resultPoint.X = resultPoint.X / Math.PI * 180;
+            resultPoint.Y = resultPoint.Y / Math.PI * 180;
+
+            return resultPoint;
+        }
+
+        #endregion
+
+        #region GEOCENTRIC TO GEOGRAPHIC
+
+        public GeoPoint TransformGeographicToGeocentric(GeoPoint inputPoint, enumEllipsoids targetEllipsoid = enumEllipsoids.WGS84)
+        {
+            GeoPoint resultPoint = new GeoPoint();
+
+            Ellipsoid ellipsoid = this.ellipsoids[targetEllipsoid];
+
+            double latitude = (inputPoint.X * Math.PI) / 180,
+                longitude = (inputPoint.Y * Math.PI) / 180,
+                h = inputPoint.Z,
+                N = Math.Pow(ellipsoid.a, 2) / Math.Sqrt(Math.Pow(ellipsoid.a, 2) * Math.Pow(Math.Cos(latitude), 2) + Math.Pow(ellipsoid.b, 2) * Math.Pow(Math.Sin(latitude), 2));
+
+            resultPoint.X = (N + h) * Math.Cos(latitude) * Math.Cos(longitude);
+            resultPoint.Y = (N + h) * Math.Cos(latitude) * Math.Sin(longitude);
+            resultPoint.Z = ((Math.Pow(ellipsoid.b, 2) / Math.Pow(ellipsoid.a, 2)) * N + h) * Math.Sin(latitude);
+
+            return resultPoint;
+        }
+        public GeoPoint TransformGeocentricToGeographic(GeoPoint inputPoint, enumEllipsoids sourceEllipsoid = enumEllipsoids.WGS84)
+        {
+            GeoPoint resultPoint = new GeoPoint();
+
+            Ellipsoid ellipsoid = this.ellipsoids[sourceEllipsoid];
+
+            double p = Math.Sqrt(Math.Pow(inputPoint.X, 2) + Math.Pow(inputPoint.Y, 2)),
+                e2 = (Math.Pow(ellipsoid.a, 2) - Math.Pow(ellipsoid.b, 2)) / Math.Pow(ellipsoid.a, 2);
+
+            double latitude = 0.0,
+              longitude = Math.Atan(inputPoint.Y / inputPoint.X),
+              h = 0.0,
+              latp = (inputPoint.Z / p) * Math.Pow(1 - e2, -1),
+              Np = 0.0;
+
+            for (int i = 0; i < 10; i++)
+            {
+                Np =
+                  Math.Pow(ellipsoid.a, 2) /
+                  Math.Sqrt(Math.Pow(ellipsoid.a, 2) * Math.Pow(Math.Cos(latp), 2) + Math.Pow(ellipsoid.b, 2) * Math.Pow(Math.Sin(latp), 2));
+
+                h = p / Math.Cos(latp) - Np;
+
+                latitude = Math.Atan((inputPoint.Z / p) * Math.Pow(1 - e2 * (Np / (Np + h)), -1));
+
+                if (Math.Abs(latitude - latp) <= 0.0000000001)
+                {
+                    break;
+                }
+                else
+                {
+                    latp = latitude;
+                }
+            }
+
+            resultPoint.X = latitude / Math.PI * 180;
+            resultPoint.Y = longitude / Math.PI * 180;
+
+            return resultPoint;
+        }
+
+        #endregion
+
+
         #region KKC 2005 AND GEOGRAPHIC
 
         /// <summary>
@@ -455,7 +532,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection">Input coordinates</param>
         /// <param name="outputEllipsoid">Input coordinates</param>
         /// <returns></returns>
-        public GeoPoint TransformLambertProjectedToGeographic(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_2005_KK, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformLambertToGeographic(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_2005_KK, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -528,7 +605,7 @@ namespace BojkoSoft.Transformations
         /// <param name="outputProjection">Input coordinates</param>
         /// <param name="inputEllipsoid">Input coordinates</param>
         /// <returns></returns>
-        public GeoPoint TransformGeographicToLambertProjected(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_2005_KK, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeographicToLambert(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_2005_KK, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
