@@ -9,7 +9,7 @@ namespace BojkoSoft.Transformations.Tests
         private Transformations tr = new Transformations();
 
         [TestMethod()]
-        public void TransformGeographicToGaussTest()
+        public void TransformGeographicToGauss()
         {
             GeoPoint input = new GeoPoint(42.7602978166667, 25.3824052611111);
             GeoPoint expected = new GeoPoint(4736629.503, 8613154.6069);
@@ -19,7 +19,7 @@ namespace BojkoSoft.Transformations.Tests
         }
 
         [TestMethod()]
-        public void TransformGaussToGeographicTest()
+        public void TransformGaussToGeographic()
         {
             GeoPoint input = new GeoPoint(4736629.503, 8613154.6069);
             GeoPoint expected = new GeoPoint(42.7602978166667, 25.3824052611111);

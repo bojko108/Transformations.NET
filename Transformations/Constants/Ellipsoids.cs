@@ -91,7 +91,7 @@ namespace BojkoSoft.Transformations.Constants
         /// </summary>
         private void Init()
         {
-            
+
             this.ellipsoids.Add(enumEllipsoids.GRS80, new Ellipsoid(6378137.0, 6356752.31414));
             this.ellipsoids.Add(enumEllipsoids.BESSEL_1841, new Ellipsoid(6377397.155, 6356078.963));
             this.ellipsoids.Add(enumEllipsoids.CLARKE_1866, new Ellipsoid(6378206.4, 6356583.8));

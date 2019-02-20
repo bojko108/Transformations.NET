@@ -9,7 +9,7 @@ namespace BojkoSoft.Transformations.Tests
         private Transformations tr = new Transformations();
 
         [TestMethod()]
-        public void TransformGeographicToGeocentricTest()
+        public void TransformGeographicToGeocentric()
         {
             GeoPoint input = new GeoPoint(42.450682, 24.749747);
             GeoPoint expected = new GeoPoint(4280410.654, 1973273.422, 4282674.061);
@@ -18,7 +18,7 @@ namespace BojkoSoft.Transformations.Tests
         }
 
         [TestMethod()]
-        public void TransformGeocentricToGeographicTest()
+        public void TransformGeocentricToGeographic()
         {
             GeoPoint input = new GeoPoint(4280410.654, 1973273.422, 4282674.061);
             GeoPoint expected = new GeoPoint(42.450682, 24.749747);

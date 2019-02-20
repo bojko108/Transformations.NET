@@ -38,19 +38,19 @@ namespace BojkoSoft.Transformations.Constants
         /// <summary>
         /// ~ Northewest Bulgaria
         /// </summary>
-        BGS_1970_К3,
+        BGS_1970_K3,
         /// <summary>
         /// ~ Southeast Bulgaria
         /// </summary>
-        BGS_1970_К5,
+        BGS_1970_K5,
         /// <summary>
         /// ~ Northeast Bulgaria
         /// </summary>
-        BGS_1970_К7,
+        BGS_1970_K7,
         /// <summary>
         /// ~ Southwest Bulgaria
         /// </summary>
-        BGS_1970_К9,
+        BGS_1970_K9,
         /// <summary>
         /// Lambert Conformal Conic with 2SP used by Cadastral agency
         /// </summary>
@@ -74,7 +74,7 @@ namespace BojkoSoft.Transformations.Constants
         /// Available projections
         /// </summary>
         private Dictionary<enumProjections, Projection> projections;
-        
+
         /// <summary>
         /// Available projections
         /// </summary>
@@ -111,15 +111,13 @@ namespace BojkoSoft.Transformations.Constants
             this.projections.Add(enumProjections.BGS_1950_3_27, new Projection(27, 95500000, 1.0));
             this.projections.Add(enumProjections.BGS_1950_6_21, new Projection(21, 4500000, 1.0));
             this.projections.Add(enumProjections.BGS_1950_6_27, new Projection(27, 5500000, 1.0));
-            this.projections.Add(enumProjections.BGS_1970_К3, new Projection("k3"));
-            this.projections.Add(enumProjections.BGS_1970_К5, new Projection("k5"));
-            this.projections.Add(enumProjections.BGS_1970_К7, new Projection("k7"));
-            this.projections.Add(enumProjections.BGS_1970_К9, new Projection("k9"));
+            this.projections.Add(enumProjections.BGS_1970_K3, new Projection("k3"));
+            this.projections.Add(enumProjections.BGS_1970_K5, new Projection("k5"));
+            this.projections.Add(enumProjections.BGS_1970_K7, new Projection("k7"));
+            this.projections.Add(enumProjections.BGS_1970_K9, new Projection("k9"));
             this.projections.Add(enumProjections.BGS_2005_KK, new Projection(42.0, 43.333333333333336, 42.667875683333333, 25.5, 0.0, 500000.0, 1.0));
             this.projections.Add(enumProjections.UTM34N, new Projection(21, 500000.0, 0.9996));
             this.projections.Add(enumProjections.UTM35N, new Projection(27, 500000.0, 0.9996));
         }
     }
 }
-
-

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace BojkoSoft.Transformations
@@ -144,7 +145,7 @@ namespace BojkoSoft.Transformations
         /// <param name="c2"></param>
         /// <returns>Next avaliable entity number.</returns>
         public static void GetAffineTransformationParameters
-          (long numberPoints, List<double> Xg, List<double> Yg, List<double> xl, List<double> yl,
+          (int numberPoints, List<double> xl, List<double> yl, List<double> Xg, List<double> Yg,
           out double a1, out double a2, out double b1, out double b2, out double c1, out double c2)
         {
             try
@@ -205,6 +206,25 @@ namespace BojkoSoft.Transformations
             {
                 a1 = b1 = a2 = b2 = c1 = c2 = 0;
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="numberPoints"></param>
+        /// <param name="inputPoints"></param>
+        /// <param name="outputPoints"></param>
+        /// <param name="a1"></param>
+        /// <param name="a2"></param>
+        /// <param name="b1"></param>
+        /// <param name="b2"></param>
+        /// <param name="c1"></param>
+        /// <param name="c2"></param>
+        public static void CalculateAffineTransformationParameters
+          (int numberPoints, List<GeoPoint> inputPoints, List<GeoPoint> outputPoints,
+          out double a1, out double a2, out double b1, out double b2, out double c1, out double c2)
+        {
+            Helpers.GetAffineTransformationParameters(numberPoints, inputPoints.Select(p => p.X).ToList(), inputPoints.Select(p => p.Y).ToList(), outputPoints.Select(p => p.X).ToList(), outputPoints.Select(p => p.Y).ToList(), out a1, out a2, out b1, out b2, out c1, out c2);
         }
     }
 }

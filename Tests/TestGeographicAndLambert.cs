@@ -9,7 +9,7 @@ namespace BojkoSoft.Transformations.Tests
         private Transformations tr = new Transformations();
 
         [TestMethod()]
-        public void TransformGeographicToLambertProjectedTest()
+        public void TransformGeographicToLambertProjected()
         {
             GeoPoint input = new GeoPoint(42.7589996, 25.3799991);
             GeoPoint expected = new GeoPoint(4735953.349, 490177.508);
@@ -18,7 +18,7 @@ namespace BojkoSoft.Transformations.Tests
         }
 
         [TestMethod()]
-        public void TransformLambertProjectedToGeographicTest()
+        public void TransformLambertProjectedToGeographic()
         {
             GeoPoint input = new GeoPoint(4735953.349, 490177.508);
             GeoPoint expected = new GeoPoint(42.7589996, 25.3799991);

@@ -9,7 +9,7 @@ namespace BojkoSoft.Transformations.Tests
         private Transformations tr = new Transformations();
 
         [TestMethod()]
-        public void TransformGeographicToUTMTest()
+        public void TransformGeographicToUTM()
         {
             GeoPoint input = new GeoPoint(42.450682, 24.749747);
             GeoPoint expected = new GeoPoint(4702270.179, 314955.869);
@@ -19,7 +19,7 @@ namespace BojkoSoft.Transformations.Tests
         }
 
         [TestMethod()]
-        public void TransformUTMToGeographicTest()
+        public void TransformUTMToGeographic()
         {
             GeoPoint input = new GeoPoint(4702270.179, 314955.869);
             GeoPoint expected = new GeoPoint(42.450682, 24.749747);
