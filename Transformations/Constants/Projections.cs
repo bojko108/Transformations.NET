@@ -52,15 +52,15 @@ namespace BojkoSoft.Transformations.Constants
         /// </summary>
         BGS_1970_K9,
         /// <summary>
-        /// Lambert Conformal Conic with 2SP used by Cadastral agency
+        /// Lambert Conformal Conic with 2SP used by Cadastral Agency
         /// </summary>
         BGS_2005_KK,
         /// <summary>
-        /// UTM zone 34 north
+        /// UTM zone 34 North
         /// </summary>
         UTM34N,
         /// <summary>
-        /// UTM zone 35 north
+        /// UTM zone 35 North
         /// </summary>
         UTM35N
     }

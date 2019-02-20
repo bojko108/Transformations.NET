@@ -15,7 +15,7 @@ namespace BojkoSoft.Transformations
 
         /// <summary>
         /// The value has different meaning in different coordinate systems:
-        /// - WGS84: represents Latitude
+        /// - Geographic: represents Latitude
         /// - Lambert: represents Northing
         /// - UTM: represents Northing
         /// - Old BGS: represents X
@@ -24,7 +24,7 @@ namespace BojkoSoft.Transformations
         public double X { get; set; }
         /// <summary>
         /// The value has different meaning in different coordinate systems:
-        /// - WGS84: represents Longitude
+        /// - Geographic: represents Longitude
         /// - Lambert: represents Easting
         /// - UTM: represents Easting
         /// - Old BGS: represents Y
@@ -47,14 +47,14 @@ namespace BojkoSoft.Transformations
         /// Create a new Point
         /// </summary>
         /// <param name="x">The value has different meaning in different coordinate systems:
-        /// - WGS84: represents Latitude
+        /// - Geographic: represents Latitude
         /// - Lambert: represents Northing
         /// - UTM: represents Northing
         /// - Old BGS: represents X
         /// - Cartesian: y
         /// </param>
         /// <param name="y">The value has different meaning in different coordinate systems:
-        /// - WGS84: represents Longitude
+        /// - Geographic: represents Longitude
         /// - Lambert: represents Easting
         /// - UTM: represents Easting
         /// - Old BGS: represents Y
@@ -66,14 +66,14 @@ namespace BojkoSoft.Transformations
         /// Create a new Point
         /// </summary>
         /// <param name="x">The value has different meaning in different coordinate systems:
-        /// - WGS84: represents Latitude
+        /// - Geographic: represents Latitude
         /// - Lambert: represents Northing
         /// - UTM: represents Northing
         /// - Old BGS: represents X
         /// - Cartesian: y
         /// </param>
         /// <param name="y">The value has different meaning in different coordinate systems:
-        /// - WGS84: represents Longitude
+        /// - Geographic: represents Longitude
         /// - Lambert: represents Easting
         /// - UTM: represents Easting
         /// - Old BGS: represents Y
@@ -90,14 +90,14 @@ namespace BojkoSoft.Transformations
         /// </summary>
         /// <param name="id">Unique ID of a point</param>
         /// <param name="x">The value has different meaning in different coordinate systems:
-        /// - WGS84: represents Latitude
+        /// - Geographic: represents Latitude
         /// - Lambert: represents Northing
         /// - UTM: represents Northing
         /// - Old BGS: represents X
         /// - Cartesian: y
         /// </param>
         /// <param name="y">The value has different meaning in different coordinate systems:
-        /// - WGS84: represents Longitude
+        /// - Geographic: represents Longitude
         /// - Lambert: represents Easting
         /// - UTM: represents Easting
         /// - Old BGS: represents Y

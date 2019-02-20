@@ -453,7 +453,7 @@ namespace BojkoSoft.Transformations
         #endregion
 
 
-        #region BGS
+        #region BGS Coordinates
 
         /// <summary>
         /// Transforms from BGS 1930, BGS1950, BGS Sofia, BGS 1970 or BGS 2005 projected coordinates to the specified projection.
@@ -465,36 +465,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection">input coordinates projection</param>
         /// <param name="outputProjection">output projection</param>
         /// <returns>coordinates in specified projection</returns>
-        public GeoPoint TransformFromBGS(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK)
-        {
-            return this.TransformWithControlPoints(inputPoint, inputProjection, outputProjection);
-        }
-
-        /// <summary>
-        /// Transforms from the specified projection to BGS 1930, BGS1950, BGS Sofia, BGS 1970 or BGS 2005 projected coordinates.
-        /// Transforms a point by calculating local transformation parameters. Transformation parameters are calculated using predefiend
-        /// control points. Control points are searched within 20 000m around the input point. If the point is close to the border of 
-        /// the projection an exception will be thrown.
-        /// </summary>
-        /// <param name="inputPoint">input coordinates in specified projection</param>
-        /// <param name="inputProjection">input coordinates projeection</param>
-        /// <param name="outputProjection">output coordinates projection</param>
-        /// <returns>coordinates in BGS 1930, BGS1950, BGS 1970 or BGS 2005</returns>
-        public GeoPoint TransformToBGS(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_2005_KK, enumProjection outputProjection = enumProjection.BGS_1970_K9)
-        {
-            return this.TransformWithControlPoints(inputPoint, inputProjection, outputProjection);
-        }
-
-        /// <summary>
-        /// Transforms a point by calculating local transformation parameters. Transformation parameters are calculated using predefiend
-        /// control points. Control points are searched within 20 000m around the input point. If the point is close to the border of 
-        /// the projection an exception will be thrown.
-        /// </summary>
-        /// <param name="inputPoint"></param>
-        /// <param name="inputProjection"></param>
-        /// <param name="outputProjection"></param>
-        /// <returns></returns>
-        private GeoPoint TransformWithControlPoints(GeoPoint inputPoint, enumProjection inputProjection, enumProjection outputProjection)
+        public GeoPoint TransformBGSCoordinates(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK)
         {
             double distance = 20000;
 
@@ -513,8 +484,7 @@ namespace BojkoSoft.Transformations
 
             return resultPoint;
         }
-
-
+        
         #endregion
 
 
