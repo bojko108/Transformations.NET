@@ -17,7 +17,7 @@ namespace BojkoSoft.Transformations
     {
         private readonly Ellipsoids ellipsoids = new Ellipsoids();
         private readonly Projections projections = new Projections();
-        private readonly Dictionary<enumProjections, ControlPointsClass> controlPoints = new Dictionary<enumProjections, ControlPointsClass>();
+        private readonly Dictionary<enumProjection, ControlPointsClass> controlPoints = new Dictionary<enumProjection, ControlPointsClass>();
 
         /// <summary>
         /// Transform points between different coordinate systems
@@ -27,17 +27,17 @@ namespace BojkoSoft.Transformations
         {
             if (useControlPoints)
             {
-                this.controlPoints.Add(enumProjections.BGS_1930_24, new BGS193024());
-                this.controlPoints.Add(enumProjections.BGS_1930_27, new BGS193027());
-                this.controlPoints.Add(enumProjections.BGS_1950_3_24, new BGS1950324());
-                this.controlPoints.Add(enumProjections.BGS_1950_3_27, new BGS1950327());
-                this.controlPoints.Add(enumProjections.BGS_1950_6_21, new BGS1950621());
-                this.controlPoints.Add(enumProjections.BGS_1950_6_27, new BGS1950627());
-                this.controlPoints.Add(enumProjections.BGS_1970_K3, new BGS1970K3());
-                this.controlPoints.Add(enumProjections.BGS_1970_K5, new BGS1970K5());
-                this.controlPoints.Add(enumProjections.BGS_1970_K7, new BGS1970K7());
-                this.controlPoints.Add(enumProjections.BGS_1970_K9, new BGS1970K9());
-                this.controlPoints.Add(enumProjections.BGS_2005_KK, new BGS2005KK());
+                this.controlPoints.Add(enumProjection.BGS_1930_24, new BGS193024());
+                this.controlPoints.Add(enumProjection.BGS_1930_27, new BGS193027());
+                this.controlPoints.Add(enumProjection.BGS_1950_3_24, new BGS1950324());
+                this.controlPoints.Add(enumProjection.BGS_1950_3_27, new BGS1950327());
+                this.controlPoints.Add(enumProjection.BGS_1950_6_21, new BGS1950621());
+                this.controlPoints.Add(enumProjection.BGS_1950_6_27, new BGS1950627());
+                this.controlPoints.Add(enumProjection.BGS_1970_K3, new BGS1970K3());
+                this.controlPoints.Add(enumProjection.BGS_1970_K5, new BGS1970K5());
+                this.controlPoints.Add(enumProjection.BGS_1970_K7, new BGS1970K7());
+                this.controlPoints.Add(enumProjection.BGS_1970_K9, new BGS1970K9());
+                this.controlPoints.Add(enumProjection.BGS_2005_KK, new BGS2005KK());
             }
         }
 
@@ -51,7 +51,7 @@ namespace BojkoSoft.Transformations
         /// <param name="outputProjection">output Lambert projection</param>
         /// <param name="outputEllipsoid">output Lambert projection is using this ellipsoid</param>
         /// <returns>geographic coordinates projected to Lambert projection</returns>
-        public GeoPoint TransformGeographicToLambert(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_2005_KK, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeographicToLambert(GeoPoint inputPoint, enumProjection outputProjection = enumProjection.BGS_2005_KK, enumEllipsoid outputEllipsoid = enumEllipsoid.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -98,7 +98,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection">input Lambert projection</param>
         /// <param name="inputEllipsoid">input Lambert projection is using this ellipsoid</param>
         /// <returns>geographic coordinates</returns>
-        public GeoPoint TransformLambertToGeographic(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_2005_KK, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformLambertToGeographic(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_2005_KK, enumEllipsoid inputEllipsoid = enumEllipsoid.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -176,7 +176,7 @@ namespace BojkoSoft.Transformations
         /// <param name="outputUtmProjection">target UTM projection</param>
         /// <param name="inputEllipsoid">input coordinates are for this ellipsoid</param>
         /// <returns>input coordinates in UTM projection</returns>
-        public GeoPoint TransformGeographicToUTM(GeoPoint inputPoint, enumProjections outputUtmProjection = enumProjections.UTM35N, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeographicToUTM(GeoPoint inputPoint, enumProjection outputUtmProjection = enumProjection.UTM35N, enumEllipsoid inputEllipsoid = enumEllipsoid.WGS84)
         {
             return this.TransformGeographicToGauss(inputPoint, outputUtmProjection, inputEllipsoid);
         }
@@ -188,7 +188,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputUtmProjection">input coordinates projection</param>
         /// <param name="outputEllipsoid">output ellipsoid</param>
         /// <returns>geographic coordinates</returns>
-        public GeoPoint TransformUTMToGeographic(GeoPoint inputPoint, enumProjections inputUtmProjection = enumProjections.UTM35N, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformUTMToGeographic(GeoPoint inputPoint, enumProjection inputUtmProjection = enumProjection.UTM35N, enumEllipsoid outputEllipsoid = enumEllipsoid.WGS84)
         {
             return this.TransformGaussToGeographic(inputPoint, inputUtmProjection, outputEllipsoid);
         }
@@ -205,7 +205,7 @@ namespace BojkoSoft.Transformations
         /// <param name="outputProjection">target gauss projection</param>
         /// <param name="inputEllipsoid">input coordinates are for this ellipsoid</param>
         /// <returns>projected coordinates in gauss projection</returns>
-        public GeoPoint TransformGeographicToGauss(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_1930_24, enumEllipsoids inputEllipsoid = enumEllipsoids.HAYFORD)
+        public GeoPoint TransformGeographicToGauss(GeoPoint inputPoint, enumProjection outputProjection = enumProjection.BGS_1930_24, enumEllipsoid inputEllipsoid = enumEllipsoid.HAYFORD)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -261,7 +261,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection">input gauss projection</param>
         /// <param name="outputEllipsoid">target ellipsoid</param>
         /// <returns>geographic coordinates in target ellipsoid</returns>
-        public GeoPoint TransformGaussToGeographic(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_1930_24, enumEllipsoids outputEllipsoid = enumEllipsoids.HAYFORD)
+        public GeoPoint TransformGaussToGeographic(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1930_24, enumEllipsoid outputEllipsoid = enumEllipsoid.HAYFORD)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -343,7 +343,7 @@ namespace BojkoSoft.Transformations
 
             double latitude = inputPoint.X,
               longitude = inputPoint.Y,
-              halfRadius = Math.PI * this.ellipsoids[enumEllipsoids.SPHERE].a;
+              halfRadius = Math.PI * this.ellipsoids[enumEllipsoid.SPHERE].a;
 
             resultPoint.X = (longitude * halfRadius) / 180;
             resultPoint.Y = Math.Log(Math.Tan(((90 + latitude) * Math.PI) / 360)) / (Math.PI / 180);
@@ -364,7 +364,7 @@ namespace BojkoSoft.Transformations
 
             double x = inputPoint.Y,
                 y = inputPoint.X,
-                halfRadius = Math.PI * this.ellipsoids[enumEllipsoids.SPHERE].a;
+                halfRadius = Math.PI * this.ellipsoids[enumEllipsoid.SPHERE].a;
 
 
             resultPoint.X = (x / halfRadius) * 180;
@@ -386,7 +386,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputPoint">input geographic coordinates</param>
         /// <param name="outputEllipsoid">output ellipsoid (same as input coordinates ellipsoid)</param>
         /// <returns>geocentric coordinates in output ellipsoid</returns>
-        public GeoPoint TransformGeographicToGeocentric(GeoPoint inputPoint, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeographicToGeocentric(GeoPoint inputPoint, enumEllipsoid outputEllipsoid = enumEllipsoid.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -410,7 +410,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputPoint">input geocentric coordinates</param>
         /// <param name="inputEllipsoid">input coordinates are for this ellipsoid</param>
         /// <returns>geographic coordinates</returns>
-        public GeoPoint TransformGeocentricToGeographic(GeoPoint inputPoint, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeocentricToGeographic(GeoPoint inputPoint, enumEllipsoid inputEllipsoid = enumEllipsoid.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -465,7 +465,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection">input coordinates projection</param>
         /// <param name="outputProjection">output projection</param>
         /// <returns>coordinates in specified projection</returns>
-        public GeoPoint TransformFromBGS(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_1970_K9, enumProjections outputProjection = enumProjections.BGS_2005_KK)
+        public GeoPoint TransformFromBGS(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK)
         {
             return this.TransformWithControlPoints(inputPoint, inputProjection, outputProjection);
         }
@@ -480,7 +480,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection">input coordinates projeection</param>
         /// <param name="outputProjection">output coordinates projection</param>
         /// <returns>coordinates in BGS 1930, BGS1950, BGS 1970 or BGS 2005</returns>
-        public GeoPoint TransformToBGS(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_2005_KK, enumProjections outputProjection = enumProjections.BGS_1970_K9)
+        public GeoPoint TransformToBGS(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_2005_KK, enumProjection outputProjection = enumProjection.BGS_1970_K9)
         {
             return this.TransformWithControlPoints(inputPoint, inputProjection, outputProjection);
         }
@@ -494,7 +494,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection"></param>
         /// <param name="outputProjection"></param>
         /// <returns></returns>
-        private GeoPoint TransformWithControlPoints(GeoPoint inputPoint, enumProjections inputProjection, enumProjections outputProjection)
+        private GeoPoint TransformWithControlPoints(GeoPoint inputPoint, enumProjection inputProjection, enumProjection outputProjection)
         {
             double distance = 20000;
 
