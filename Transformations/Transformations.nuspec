@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Transformations.NET</id>
+    <version>$version$</version>
+    <title>Transformations.NET</title>
+    <authors>bojko108</authors>
+    <owners>bojko108</owners>
+    <license type="file">LICENSE.txt</license>
+    <projectUrl>https://github.com/bojko108/Transformations.NET</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Transformations.NET - transforms coordinates between various coordinate systems used in Bulgaria.</description>
+    <copyright>Copyright 2019</copyright>
+    <tags>coordinates convert WGS84 lambert mercator gauss-kruger kdbush spatial index</tags>
+    <dependencies>
+      <dependency id="KDBush" version="1.0.11" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="LICENSE.txt" target="" />
+  </files>
+</package>

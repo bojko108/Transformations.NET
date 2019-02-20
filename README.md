@@ -44,11 +44,15 @@ You can transform between:
 - Projected coordinates
 - Geocentric coordinates
 
-Transformation from/to BGS coordinate systems is done by calculating transformation parameters for affine transformation based on predefined control points ([ControlPoints namespace](https://github.com/bojko108/Transformations.NET/tree/master/Transformations/ControlPoints)). All other transformations are done directly as the transformation parameters are known. Precision is arround **`20cm`**.
+Transformations between BGS coordinate systems is done by calculating transformation parameters for affine transformation based on predefined control points ([ControlPoints namespace](https://github.com/bojko108/Transformations.NET/tree/master/Transformations/ControlPoints)). All other transformations are done directly as the transformation parameters are known. Precision is arround **`20cm`**.
 
 ## How to use
 
-Add a reference to `Transformations.dll` and:
+You can install it with Nuget:
+
+```
+Install-Package Transformations.NET
+```
 
 ```csharp
 using BojkoSoft.Transformations;
