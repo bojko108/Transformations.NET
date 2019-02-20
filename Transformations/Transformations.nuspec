@@ -12,6 +12,7 @@
     <description>Transformations.NET - transforms coordinates between various coordinate systems used in Bulgaria.</description>
     <copyright>Copyright 2019</copyright>
     <tags>coordinates convert WGS84 lambert mercator gauss-kruger kdbush spatial index</tags>
+	<releaseNotes>BGS Sofia added</releaseNotes>
     <dependencies>
       <dependency id="KDBush" version="1.0.11" />
     </dependencies>

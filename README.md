@@ -212,11 +212,11 @@ Transformations tr = new Transformations();
 
 GeoPoint input = new GeoPoint(42.7589996, 25.3799991);
 GeoPoint result = tr.TransformGeographicToLambert(input);
-// result is: 4735953.342, Y: 490177.508
+// result is: 4735953.342, 490177.508
 
 GeoPoint input = new GeoPoint(4735953.349, 490177.508);
 GeoPoint result = tr.TransformLambertToGeographic(input);
-// result is: 42.7589997, Y: 25.3799991
+// result is: 42.7589997, 25.3799991
 ```
 
 ### Transform between geographic coordinates and projected in UTM
@@ -226,11 +226,11 @@ Transformations tr = new Transformations();
 
 GeoPoint input = new GeoPoint(42.450682, 24.749747);
 GeoPoint result = tr.TransformGeographicToUTM(input);
-// result is:  4702270.178, Y: 314955.869
+// result is: 4702270.178, 314955.869
 
 GeoPoint input = new GeoPoint(4702270.179, 314955.869);
 GeoPoint result = tr.TransformUTMToGeographic(input);
-// result is: 42.450682, Y: 24.749747
+// result is: 42.450682, 24.749747
 ```
 
 ### Transform between geographic coordinates and projected in Gauss–Krüger
@@ -240,11 +240,11 @@ Transformations tr = new Transformations();
 
 GeoPoint input = new GeoPoint(42.7602978166667, 25.3824052611111);
 GeoPoint result = tr.TransformGeographicToGauss(input);
-// result is: 4736629.503, Y: 8613154.606
+// result is: 4736629.503, 8613154.606
 
 GeoPoint input = new GeoPoint(4736629.503, 8613154.607);
 GeoPoint result = tr.TransformGaussToGeographic(input);
-// result is: 42.7602978, Y: 25.38240528
+// result is: 42.7602978, 25.38240528
 ```
 
 ### Transform between geographic coordinates and projected in Web Mercator
@@ -254,11 +254,11 @@ Transformations tr = new Transformations();
 
 GeoPoint input = new GeoPoint(42.450682, 24.749747);
 GeoPoint result = tr.TransformGeographicToWebMercator(input);
-// result is: 2755129.233, Y: 5228730.328
+// result is: 2755129.233, 5228730.328
 
 GeoPoint input = new GeoPoint(2755129.23, 5228730.33);
 GeoPoint result = tr.TransformWebMercatorToGeographic(input);
-// result is: 42.4506820, Y: 24.7497470
+// result is: 42.4506820, 24.7497470
 ```
 
 ### Transform between geographic and geocentric coordinates
@@ -268,11 +268,11 @@ Transformations tr = new Transformations();
 
 GeoPoint input = new GeoPoint(42.450682, 24.749747);
 GeoPoint result = tr.TransformGeographicToGeocentric(input);
-// result is: X: 4280410.654, 1973273.422, 4282674.061}
+// result is: X: 4280410.654, 1973273.422, 4282674.061
 
 GeoPoint input = new GeoPoint(4280410.654, 1973273.422, 4282674.061);
 GeoPoint result = tr.TransformGeocentricToGeographic(input);
-// result is: 42.450682, Y: 24.749747
+// result is: 42.450682, 24.749747
 ```
 
 ### Transform between BGS coordinates
@@ -298,11 +298,25 @@ Transformations tr = new Transformations();
 
 GeoPoint input = new GeoPoint(4729331.175, 8606933.614);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_1950_3_24, enumProjection.BGS_2005_KK);
-// result is: 4728401.442, Y: 483893.521
+// result is: 4728401.442, 483893.521
 
 GeoPoint input = new GeoPoint(4728401.432, 483893.508);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_2005_KK, enumProjection.BGS_1950_3_24);
-// result is: 4729331.165, Y: 8606933.601
+// result is: 4729331.165, 8606933.601
+```
+
+- BGS Sofia
+
+```csharp
+Transformations tr = new Transformations();
+
+GeoPoint input = new GeoPoint(48276.705, 45420.988);
+GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_SOFIA, enumProjection.BGS_2005_KK);
+// result is: 4730215.221, 322402.929
+
+GeoPoint input = new GeoPoint(4730215.229, 322402.935);
+GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_2005_KK, enumProjection.BGS_SOFIA);
+// result is: 48276.713, 45420.993
 ```
 
 - BGS 1970
@@ -312,35 +326,35 @@ Transformations tr = new Transformations();
 
 GeoPoint input = new GeoPoint(4725270.684, 8515734.475);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_1970_K3, enumProjection.BGS_2005_KK);
-// result is: 4816275.688, Y: 332535.346
+// result is: 4816275.688, 332535.346
 
 GeoPoint input = new GeoPoint(4816275.680, 332535.401);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_2005_KK, enumProjection.BGS_1970_K3);
-// result is: 4725270.677, Y: 8515734.530
+// result is: 4725270.677, 8515734.530
 
 GeoPoint input = new GeoPoint(4613479.192, 9493233.633);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_1970_K5, enumProjection.BGS_2005_KK);
-// result is: 4679669.824, Y: 569554.912
+// result is: 4679669.824, 569554.912
 
 GeoPoint input = new GeoPoint(4679669.825, 569554.918);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_2005_KK, enumProjection.BGS_1970_K5);
-// result is: 4613479.193, Y: 9493233.639
+// result is: 4613479.193, 9493233.639
 
 GeoPoint input = new GeoPoint(4708089.898, 9570974.988);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_1970_K7, enumProjection.BGS_2005_KK);
-// result is: 4810276.410, Y: 626498.618
+// result is: 4810276.410, 626498.618
 
 GeoPoint input = new GeoPoint(4810276.431, 626498.611);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_2005_KK, enumProjection.BGS_1970_K7);
-// result is: 4708089.919, Y: 9570974.981
+// result is: 4708089.919, 9570974.981
 
 GeoPoint input = new GeoPoint(4547844.976, 8508858.179);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
-// result is: 4675440.859, Y: 330568.410
+// result is: 4675440.859, 330568.410
 
 GeoPoint input = new GeoPoint(4675440.847, 330568.434);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_2005_KK, enumProjection.BGS_1970_K9);
-// result is: 4547844.965, Y: 8508858.203
+// result is: 4547844.965, 8508858.203
 ```
 
 ### Format decimal degrees from/to degrees, minutes and seconds

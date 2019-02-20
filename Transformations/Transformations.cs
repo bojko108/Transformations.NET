@@ -40,7 +40,7 @@ namespace BojkoSoft.Transformations
                 this.controlPoints.Add(enumProjection.BGS_2005_KK, new BGS2005KK());
             }
         }
-
+        
 
         #region GEOGRAPHIC AND LAMBERT
 
@@ -469,8 +469,14 @@ namespace BojkoSoft.Transformations
         {
             double distance = 20000;
 
-            ControlPointsClass inputControlPoints = this.controlPoints[inputProjection];
-            ControlPointsClass outputControlPoints = this.controlPoints[outputProjection];
+            if (inputProjection == enumProjection.BGS_SOFIA)
+            {
+                inputPoint.X += this.projections[inputProjection].X0;
+                inputPoint.Y += this.projections[inputProjection].Y0;
+            }
+
+            ControlPointsClass inputControlPoints = inputProjection == enumProjection.BGS_SOFIA ? this.controlPoints[enumProjection.BGS_1950_3_24] : this.controlPoints[inputProjection];
+            ControlPointsClass outputControlPoints = outputProjection == enumProjection.BGS_SOFIA ? this.controlPoints[enumProjection.BGS_1950_3_24] : this.controlPoints[outputProjection];
             List<GeoPoint> inputGeoPoints = inputControlPoints.GetPoints(inputPoint, distance);
             List<GeoPoint> outputGeoPoints = outputControlPoints.GetPoints(inputGeoPoints.Select(p => p.ID).ToArray());
 
@@ -482,9 +488,15 @@ namespace BojkoSoft.Transformations
             resultPoint.X = a1 * inputPoint.X + b1 * inputPoint.Y + c1;
             resultPoint.Y = b2 * inputPoint.X + a2 * inputPoint.Y + c2;
 
+            if (outputProjection == enumProjection.BGS_SOFIA)
+            {
+                resultPoint.X -= this.projections[outputProjection].X0;
+                resultPoint.Y -= this.projections[outputProjection].Y0;
+            }
+
             return resultPoint;
         }
-        
+
         #endregion
 
 

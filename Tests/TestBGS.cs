@@ -97,6 +97,28 @@ namespace BojkoSoft.Transformations.Tests
 
         #endregion
 
+        #region BGS Sofia
+
+        [TestMethod()]
+        public void TransformFromBGSSofia()
+        {
+            GeoPoint input = new GeoPoint(48276.705, 45420.988);
+            GeoPoint expected = new GeoPoint(4730215.229, 322402.935);
+            GeoPoint result = this.tr.TransformBGSCoordinates(input, enumProjection.BGS_SOFIA, enumProjection.BGS_2005_KK);
+            Common.CheckResults(expected, result, Common.DELTA_OLD_BGS);
+        }
+
+        [TestMethod()]
+        public void TransformToBGSSofia()
+        {
+            GeoPoint input = new GeoPoint(4730215.229, 322402.935);
+            GeoPoint expected = new GeoPoint(48276.705, 45420.988);
+            GeoPoint result = this.tr.TransformBGSCoordinates(input, enumProjection.BGS_2005_KK, enumProjection.BGS_SOFIA);
+            Common.CheckResults(expected, result, Common.DELTA_OLD_BGS);
+        }
+
+        #endregion
+
         #region BGS 1970
 
         [TestMethod()]
