@@ -44,7 +44,7 @@ namespace BojkoSoft.Transformations.ControlPoints
                 }
             }
 
-            return result;
+            return result.OrderBy(p => p.ID).ToList();
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace BojkoSoft.Transformations.ControlPoints
         public List<GeoPoint> GetPoints(GeoPoint point, double radius = 20000)
         {
             List<Point<GeoPoint>> queried = this.tree.Query(point.X, point.Y, radius);
-            return queried.Select(p => p.UserData).ToList();
+            return queried.Select(p => p.UserData).OrderBy(p => p.ID).ToList();
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace BojkoSoft.Transformations.ControlPoints
         public List<GeoPoint> GetPoints(GeoExtent extent)
         {
             List<Point<GeoPoint>> queried = this.tree.Query(extent.SouthWestCorner.X, extent.SouthWestCorner.Y, extent.NorthEastCorner.X, extent.NorthEastCorner.Y);
-            return queried.Select(p => p.UserData).ToList();
+            return queried.Select(p => p.UserData).OrderBy(p => p.ID).ToList();
         }
 
         internal void InitTree()
