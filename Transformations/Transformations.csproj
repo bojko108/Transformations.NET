@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BojkoSoft.Transformations</RootNamespace>
     <AssemblyName>Transformations</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\Transformations.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,8 +34,13 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Transformations.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="KDBush, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\KDBush.1.0.11\lib\net461\KDBush.dll</HintPath>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,12 +53,26 @@
     <Compile Include="Constants\Ellipsoid.cs" />
     <Compile Include="Constants\Projection.cs" />
     <Compile Include="Constants\Projections.cs" />
-    <Compile Include="ControlPoints\ControlPoints.cs" />
+    <Compile Include="ControlPoints\BGS193024.cs" />
+    <Compile Include="ControlPoints\BGS193027.cs" />
+    <Compile Include="ControlPoints\BGS1950324.cs" />
+    <Compile Include="ControlPoints\BGS1950327.cs" />
+    <Compile Include="ControlPoints\BGS1950621.cs" />
+    <Compile Include="ControlPoints\BGS1950627.cs" />
+    <Compile Include="ControlPoints\BGS1970K3.cs" />
+    <Compile Include="ControlPoints\BGS1970K5.cs" />
+    <Compile Include="ControlPoints\BGS1970K7.cs" />
+    <Compile Include="ControlPoints\BGS1970K9.cs" />
+    <Compile Include="ControlPoints\BGS2005KK.cs" />
+    <Compile Include="ControlPoints\ControlPointsClass.cs" />
+    <Compile Include="GeoExtent.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="GeoPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transformations.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

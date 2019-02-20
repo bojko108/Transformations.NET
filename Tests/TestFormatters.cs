@@ -15,7 +15,7 @@ namespace BojkoSoft.Transformations.Tests
         }
 
         [TestMethod()]
-        public void ConvertDecimalDegreesToDMSTest()
+        public void ConvertDecimalDegreesToDMS()
         {
             double latitude = 42.336542;
             string expected = "422011.5512000000052";
@@ -29,7 +29,7 @@ namespace BojkoSoft.Transformations.Tests
         }
 
         [TestMethod()]
-        public void ConvertDMStoDecimalDegreesTest()
+        public void ConvertDMStoDecimalDegrees()
         {
             string dms = "422011.5512000000052";
             double expected = 42.336542;

@@ -3,9 +3,10 @@
 //
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
-
 using BojkoSoft.Transformations.Constants;
+using BojkoSoft.Transformations.ControlPoints;
 
 namespace BojkoSoft.Transformations
 {
@@ -16,17 +17,27 @@ namespace BojkoSoft.Transformations
     {
         private readonly Ellipsoids ellipsoids = new Ellipsoids();
         private readonly Projections projections = new Projections();
+        private readonly Dictionary<enumProjection, ControlPointsClass> controlPoints = new Dictionary<enumProjection, ControlPointsClass>();
 
         /// <summary>
         /// Transform points between different coordinate systems
         /// </summary>
-        /// <param name="useControlPoints">Wheather or not the control points for transforming between KC1970 and UTM will be initialized.</param>
+        /// <param name="useControlPoints">Wheather or not the control points for transforming between BGS coordiante systems will be initialized.</param>
         public Transformations(bool useControlPoints = true)
         {
-            // control points are needed when transforming from and to BGS 1970
-            if (useControlPoints && ControlPoints.ControlPoints.areControlPointsLoaded == false)
+            if (useControlPoints)
             {
-                ControlPoints.ControlPoints.LoadControlPoints();
+                this.controlPoints.Add(enumProjection.BGS_1930_24, new BGS193024());
+                this.controlPoints.Add(enumProjection.BGS_1930_27, new BGS193027());
+                this.controlPoints.Add(enumProjection.BGS_1950_3_24, new BGS1950324());
+                this.controlPoints.Add(enumProjection.BGS_1950_3_27, new BGS1950327());
+                this.controlPoints.Add(enumProjection.BGS_1950_6_21, new BGS1950621());
+                this.controlPoints.Add(enumProjection.BGS_1950_6_27, new BGS1950627());
+                this.controlPoints.Add(enumProjection.BGS_1970_K3, new BGS1970K3());
+                this.controlPoints.Add(enumProjection.BGS_1970_K5, new BGS1970K5());
+                this.controlPoints.Add(enumProjection.BGS_1970_K7, new BGS1970K7());
+                this.controlPoints.Add(enumProjection.BGS_1970_K9, new BGS1970K9());
+                this.controlPoints.Add(enumProjection.BGS_2005_KK, new BGS2005KK());
             }
         }
 
@@ -40,7 +51,7 @@ namespace BojkoSoft.Transformations
         /// <param name="outputProjection">output Lambert projection</param>
         /// <param name="outputEllipsoid">output Lambert projection is using this ellipsoid</param>
         /// <returns>geographic coordinates projected to Lambert projection</returns>
-        public GeoPoint TransformGeographicToLambert(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_2005_KK, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeographicToLambert(GeoPoint inputPoint, enumProjection outputProjection = enumProjection.BGS_2005_KK, enumEllipsoid outputEllipsoid = enumEllipsoid.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -79,7 +90,7 @@ namespace BojkoSoft.Transformations
 
             return resultPoint;
         }
-        
+
         /// <summary>
         /// Transforms projected coordinates to geographic
         /// </summary>
@@ -87,7 +98,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection">input Lambert projection</param>
         /// <param name="inputEllipsoid">input Lambert projection is using this ellipsoid</param>
         /// <returns>geographic coordinates</returns>
-        public GeoPoint TransformLambertToGeographic(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_2005_KK, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformLambertToGeographic(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_2005_KK, enumEllipsoid inputEllipsoid = enumEllipsoid.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -152,7 +163,7 @@ namespace BojkoSoft.Transformations
 
             return resultPoint;
         }
-        
+
         #endregion
 
 
@@ -165,7 +176,7 @@ namespace BojkoSoft.Transformations
         /// <param name="outputUtmProjection">target UTM projection</param>
         /// <param name="inputEllipsoid">input coordinates are for this ellipsoid</param>
         /// <returns>input coordinates in UTM projection</returns>
-        public GeoPoint TransformGeographicToUTM(GeoPoint inputPoint, enumProjections outputUtmProjection = enumProjections.UTM35N, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeographicToUTM(GeoPoint inputPoint, enumProjection outputUtmProjection = enumProjection.UTM35N, enumEllipsoid inputEllipsoid = enumEllipsoid.WGS84)
         {
             return this.TransformGeographicToGauss(inputPoint, outputUtmProjection, inputEllipsoid);
         }
@@ -177,7 +188,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputUtmProjection">input coordinates projection</param>
         /// <param name="outputEllipsoid">output ellipsoid</param>
         /// <returns>geographic coordinates</returns>
-        public GeoPoint TransformUTMToGeographic(GeoPoint inputPoint, enumProjections inputUtmProjection = enumProjections.UTM35N, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformUTMToGeographic(GeoPoint inputPoint, enumProjection inputUtmProjection = enumProjection.UTM35N, enumEllipsoid outputEllipsoid = enumEllipsoid.WGS84)
         {
             return this.TransformGaussToGeographic(inputPoint, inputUtmProjection, outputEllipsoid);
         }
@@ -194,7 +205,7 @@ namespace BojkoSoft.Transformations
         /// <param name="outputProjection">target gauss projection</param>
         /// <param name="inputEllipsoid">input coordinates are for this ellipsoid</param>
         /// <returns>projected coordinates in gauss projection</returns>
-        public GeoPoint TransformGeographicToGauss(GeoPoint inputPoint, enumProjections outputProjection = enumProjections.BGS_1930_24, enumEllipsoids inputEllipsoid = enumEllipsoids.HAYFORD)
+        public GeoPoint TransformGeographicToGauss(GeoPoint inputPoint, enumProjection outputProjection = enumProjection.BGS_1930_24, enumEllipsoid inputEllipsoid = enumEllipsoid.HAYFORD)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -250,7 +261,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection">input gauss projection</param>
         /// <param name="outputEllipsoid">target ellipsoid</param>
         /// <returns>geographic coordinates in target ellipsoid</returns>
-        public GeoPoint TransformGaussToGeographic(GeoPoint inputPoint, enumProjections inputProjection = enumProjections.BGS_1930_24, enumEllipsoids outputEllipsoid = enumEllipsoids.HAYFORD)
+        public GeoPoint TransformGaussToGeographic(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1930_24, enumEllipsoid outputEllipsoid = enumEllipsoid.HAYFORD)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -332,7 +343,7 @@ namespace BojkoSoft.Transformations
 
             double latitude = inputPoint.X,
               longitude = inputPoint.Y,
-              halfRadius = Math.PI * this.ellipsoids[enumEllipsoids.SPHERE].a;
+              halfRadius = Math.PI * this.ellipsoids[enumEllipsoid.SPHERE].a;
 
             resultPoint.X = (longitude * halfRadius) / 180;
             resultPoint.Y = Math.Log(Math.Tan(((90 + latitude) * Math.PI) / 360)) / (Math.PI / 180);
@@ -353,7 +364,7 @@ namespace BojkoSoft.Transformations
 
             double x = inputPoint.Y,
                 y = inputPoint.X,
-                halfRadius = Math.PI * this.ellipsoids[enumEllipsoids.SPHERE].a;
+                halfRadius = Math.PI * this.ellipsoids[enumEllipsoid.SPHERE].a;
 
 
             resultPoint.X = (x / halfRadius) * 180;
@@ -375,7 +386,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputPoint">input geographic coordinates</param>
         /// <param name="outputEllipsoid">output ellipsoid (same as input coordinates ellipsoid)</param>
         /// <returns>geocentric coordinates in output ellipsoid</returns>
-        public GeoPoint TransformGeographicToGeocentric(GeoPoint inputPoint, enumEllipsoids outputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeographicToGeocentric(GeoPoint inputPoint, enumEllipsoid outputEllipsoid = enumEllipsoid.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -399,7 +410,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputPoint">input geocentric coordinates</param>
         /// <param name="inputEllipsoid">input coordinates are for this ellipsoid</param>
         /// <returns>geographic coordinates</returns>
-        public GeoPoint TransformGeocentricToGeographic(GeoPoint inputPoint, enumEllipsoids inputEllipsoid = enumEllipsoids.WGS84)
+        public GeoPoint TransformGeocentricToGeographic(GeoPoint inputPoint, enumEllipsoid inputEllipsoid = enumEllipsoid.WGS84)
         {
             GeoPoint resultPoint = new GeoPoint();
 
@@ -442,281 +453,38 @@ namespace BojkoSoft.Transformations
         #endregion
 
 
-        #region 1970 AND UTM
+        #region BGS Coordinates
 
         /// <summary>
-        /// Transforms between BGS 1970 and UTM
+        /// Transforms from BGS 1930, BGS1950, BGS Sofia, BGS 1970 or BGS 2005 projected coordinates to the specified projection.
+        /// Transforms a point by calculating local transformation parameters. Transformation parameters are calculated using predefiend
+        /// control points. Control points are searched within 20 000m around the input point. If the point is close to the border of 
+        /// the projection an exception will be thrown.
         /// </summary>
-        /// <param name="inputPoint">Input coordinates in BGS 1970</param>
-        /// <param name="source1970Projection">input coordinates zone in BGS 1970</param>
-        /// <returns>coordinates in UTM projection</returns>
-        public GeoPoint Transform1970ToUTM(GeoPoint inputPoint, enumProjections source1970Projection = enumProjections.BGS_1970_К9)
+        /// <param name="inputPoint">input projected coordinates in BGS 1930, BGS1950, BGS 1970 or BGS 2005</param>
+        /// <param name="inputProjection">input coordinates projection</param>
+        /// <param name="outputProjection">output projection</param>
+        /// <returns>coordinates in specified projection</returns>
+        public GeoPoint TransformBGSCoordinates(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK)
         {
-            GeoPoint resultPoint = new GeoPoint();
+            double distance = 20000;
 
-            double a1 = 0, b1 = 0, a2 = 0, b2 = 0, c1 = 0, c2 = 0;
-            string proba, klist;
-
-            string[] lol;
-
-            int zone;
-            switch (source1970Projection)
-            {
-                case enumProjections.BGS_1970_К3: zone = 3; break;
-                case enumProjections.BGS_1970_К5: zone = 5; break;
-                case enumProjections.BGS_1970_К7: zone = 7; break;
-                case enumProjections.BGS_1970_К9: zone = 9; break;
-                default: zone = 0; break;
-            }
-
-            proba = this.MapList1970Name(zone, inputPoint);
-
-            List<double> VertexX = new List<double>();
-            List<double> VertexY = new List<double>();
-            List<double> n = new List<double>();
-            List<double> e = new List<double>();
-
-            if (this.MapList1970XY(proba, out VertexX, out VertexY) == true)
-            {
-                if (ControlPoints.ControlPoints.dicMapList.ContainsKey(proba))
-                {
-                    klist = ControlPoints.ControlPoints.dicMapList[proba];
-                    klist = klist.Trim();
-
-                    lol = klist.Split(' ');
-
-                    n.Add(double.Parse(lol[0])); e.Add(double.Parse(lol[1]));
-                    n.Add(double.Parse(lol[2])); e.Add(double.Parse(lol[3]));
-                    n.Add(double.Parse(lol[4])); e.Add(double.Parse(lol[5]));
-                    n.Add(double.Parse(lol[6])); e.Add(double.Parse(lol[7]));
-
-                    Helpers.GetAffineTransformationParameters(4, n, e, VertexX, VertexY, out a1, out a2, out b1, out b2, out c1, out c2);
-
-                    resultPoint.X = a1 * inputPoint.X + b1 * inputPoint.Y + c1;
-                    resultPoint.Y = b2 * inputPoint.X + a2 * inputPoint.Y + c2;
-                }
-                else
-                {
-                    resultPoint.X = inputPoint.X;
-                    resultPoint.Y = inputPoint.Y;
-                }
-            }
-            else
-            {
-                resultPoint.X = inputPoint.X;
-                resultPoint.Y = inputPoint.Y;
-            }
-
-            return resultPoint;
-        }
-
-        /// <summary>
-        /// Transforms between UTM and BGS 1970. There is no need of passing UTM or BGS 1970 zone numbers as 
-        /// the transformation is done by calculating local transformation parameters.
-        /// </summary>
-        /// <param name="inputPoint">input coordinates in UTM</param>
-        /// <returns>coordinates in BGS 1970</returns>
-        public GeoPoint TransformUTMTo1970(GeoPoint inputPoint)
-        {
-            GeoPoint resultPoint = new GeoPoint();
+            ControlPointsClass inputControlPoints = this.controlPoints[inputProjection];
+            ControlPointsClass outputControlPoints = this.controlPoints[outputProjection];
+            List<GeoPoint> inputGeoPoints = inputControlPoints.GetPoints(inputPoint, distance);
+            List<GeoPoint> outputGeoPoints = outputControlPoints.GetPoints(inputGeoPoints.Select(p => p.ID).ToArray());
 
             double a1 = 0, b1 = 0, a2 = 0, b2 = 0, c1 = 0, c2 = 0;
 
-            string klist = "", proba;
-            string[] lol;
+            Helpers.CalculateAffineTransformationParameters(inputGeoPoints.Count, inputGeoPoints, outputGeoPoints, out a1, out a2, out b1, out b2, out c1, out c2);
 
-            proba = ControlPoints.ControlPoints.GetUTMListNumber(inputPoint);
-
-            List<double> VertexX = new List<double>();
-            List<double> VertexY = new List<double>();
-            List<double> n = new List<double>();
-            List<double> e = new List<double>();
-
-            if (this.MapList1970XY(proba, out VertexX, out VertexY) == true)
-            {
-                klist = ControlPoints.ControlPoints.dicMapList[proba];
-                klist = klist.Trim();
-            }
-
-            lol = klist.Split(' ');
-
-            n.Add(double.Parse(lol[0])); e.Add(double.Parse(lol[1]));
-            n.Add(double.Parse(lol[2])); e.Add(double.Parse(lol[3]));
-            n.Add(double.Parse(lol[4])); e.Add(double.Parse(lol[5]));
-            n.Add(double.Parse(lol[6])); e.Add(double.Parse(lol[7]));
-
-            Helpers.GetAffineTransformationParameters(4, VertexX, VertexY, n, e, out a1, out a2, out b1, out b2, out c1, out c2);
-
+            GeoPoint resultPoint = new GeoPoint();
             resultPoint.X = a1 * inputPoint.X + b1 * inputPoint.Y + c1;
             resultPoint.Y = b2 * inputPoint.X + a2 * inputPoint.Y + c2;
 
             return resultPoint;
         }
-
-        /// <summary>
-        /// Calculates coordinates of a map sheet in BGS 1970 (M 1:5 000)
-        /// </summary>
-        /// <param name="numberList"></param>
-        /// <param name="VertexX"></param>
-        /// <param name="VertexY"></param>
-        /// <returns></returns>
-        private bool MapList1970XY(string numberList, out List<double> VertexX, out List<double> VertexY)
-        {
-            VertexX = new List<double>();
-            VertexY = new List<double>();
-
-            bool sheet;
-            string L1 = "", L2 = "", L3 = "", L4 = "", L5 = "", L6 = "";
-            string[] ClassList;
-            int i = 0, j = 0, zone = 0, class2 = 0, class3 = 0;
-            int X0 = 0, Y0 = 0;
-            double x1 = 0, y1 = 0, x = 0, y = 0;
-            double vertexN = 0, vertexW = 0;
-
-            if (numberList.Length < 3) return false;
-
-            ClassList = numberList.Split('-');
-
-            if (ClassList.Length > 0) L1 = ClassList[0];
-            if (ClassList.Length > 1) L2 = ClassList[1];
-            if (ClassList.Length > 2) L3 = ClassList[2];
-            if (ClassList.Length > 3) L4 = ClassList[3];
-            if (ClassList.Length > 4) L5 = ClassList[4];
-            if (ClassList.Length > 5) L6 = ClassList[5];
-            if (L2.Length < 1) return false;
-
-            zone = int.Parse(L2);
-
-
-            switch (zone)
-            {
-                case 3: X0 = 4880000; Y0 = 8340000; break;
-                case 5: X0 = 4740000; Y0 = 9340000; break;
-                case 7: X0 = 4860000; Y0 = 9360000; break;
-                case 9: X0 = 4720000; Y0 = 8320000; break;
-                default: return false;
-            }
-
-            vertexN = X0;
-            vertexW = Y0;
-
-            if (L3.Length < 1) return false;
-            sheet = false;
-            class2 = int.Parse(L3);
-            for (i = 0; i <= 9; i++)
-            {
-                x1 = X0 - i * 40000;
-                for (j = 0; j <= 9; j++)
-                {
-                    y1 = Y0 + j * 40000;
-                    if (class2 == i * 10 + j)
-                    {
-                        sheet = true;
-                        break;
-                    }
-                }
-                if (sheet == true) break;
-            }
-            vertexN = x1;
-            vertexW = y1;
-            if (L4.Length < 1) return false;
-            sheet = false;
-            class3 = int.Parse(L4);
-            for (i = 0; i <= 15; i++)
-            {
-                x = x1 - i * 2500;
-                for (j = 0; j <= 15; j++)
-                {
-                    y = y1 + j * 2500;
-                    if (class3 == i * 16 + j + 1)
-                    {
-                        sheet = true;
-                        break;
-                    }
-                }
-                if (sheet == true) break;
-            }
-
-            if (sheet == false) return false;
-
-            vertexN = x;
-            vertexW = y;
-
-            VertexX.Add(vertexN);          // 0 -> 1
-            VertexY.Add(vertexW);          // 0 -> 1
-            VertexX.Add(vertexN);          // 1 -> 2
-            VertexY.Add(vertexW + 2500);   // 1 -> 2
-            VertexX.Add(vertexN - 2500);   // 2 -> 3
-            VertexY.Add(vertexW + 2500);   // 2 -> 3
-            VertexX.Add(vertexN - 2500);   // 3 -> 4
-            VertexY.Add(vertexW);          // 3 -> 4
-
-            return true;
-        }
-
-        /// <summary>
-        /// Calculates map sheet number in BGS 1970 (M 1:5 000)
-        /// </summary>
-        /// <param name="zone"></param>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        private string MapList1970Name(int zone, GeoPoint point)
-        {
-            int i, j;
-            bool sheet = false;
-            long X0, Y0;
-            double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-            int zone1 = 0, zone2 = 0;
-
-            switch (zone)
-            {
-                case 3: X0 = 4880000; Y0 = 8340000; break;
-                case 5: X0 = 4740000; Y0 = 9340000; break;
-                case 7: X0 = 4860000; Y0 = 9360000; break;
-                case 9: X0 = 4720000; Y0 = 8320000; break;
-                default: return "";
-            }
-
-            sheet = false;
-            for (i = 0; i <= 9; i++)
-            {
-                x1 = X0 - i * 40000;
-                for (j = 0; j <= 9; j++)
-                {
-                    y1 = Y0 + j * 40000;
-                    if (x1 > point.X && y1 < point.Y && (x1 - 40000) < point.X && (y1 + 40000) > point.Y)
-                    {
-                        zone1 = i * 10 + j;
-                        sheet = true;
-                        break;
-                    }
-                }
-                if (sheet == true) break;
-            }
-
-            sheet = false;
-            for (i = 0; i <= 15; i++)
-            {
-                x2 = x1 - i * 2500;
-                for (j = 0; j <= 15; j++)
-                {
-                    y2 = y1 + j * 2500;
-                    if (x2 > point.X && y2 < point.Y && (x2 - 2500) < point.X && (y2 + 2500) > point.Y)
-                    {
-                        zone2 = i * 16 + j + 1;
-                        sheet = true;
-                        break;
-                    }
-                }
-                if (sheet == true) break;
-            }
-
-            if (sheet == false) return "Точката не е в зона K-" + zone;
-            if (zone2 < 10) return "K-" + zone.ToString() + "-" + zone1.ToString() + "-00" + zone2.ToString();
-            if (zone2 < 100 && zone2 >= 10) { return "K-" + zone.ToString() + "-" + zone1.ToString() + "-0" + zone2.ToString(); }
-            else { return "K-" + zone.ToString() + "-" + zone1.ToString() + "-" + zone2.ToString(); }
-        }
-
+        
         #endregion
 
 

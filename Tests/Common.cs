@@ -10,9 +10,9 @@ namespace BojkoSoft.Transformations.Tests
 {
     public static class Common
     {
-        public static readonly double DELTA_BGS1970 = 0.2;        // 20cm
-        public static readonly double DELTA_METERS = 0.01;       //  1cm
-        public static readonly double DELTA_DEGREES = 0.0000001;
+        public static readonly double DELTA_OLD_BGS = 0.1;          // 10cm
+        public static readonly double DELTA_METERS = 0.01;          //  1cm
+        public static readonly double DELTA_DEGREES = 0.0000001;    //  1cm
 
         public static void CheckResults(GeoPoint expected, GeoPoint result, double delta, bool checkZ = false)
         {

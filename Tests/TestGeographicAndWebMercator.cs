@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace BojkoSoft.Transformations.Tests
 {
     [TestClass()]
-    class TestGeographicAndWebMercator
+    public class TestGeographicAndWebMercator
     {
         private Transformations tr = new Transformations();
 
