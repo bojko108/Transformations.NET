@@ -69,6 +69,10 @@
     <Compile Include="Helpers.cs" />
     <Compile Include="GeoPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransformationModels\AffineTransformation.cs" />
+    <Compile Include="TransformationModels\ITransformation.cs" />
+    <Compile Include="TransformationModels\Matrix.cs" />
+    <Compile Include="TransformationModels\TPSTransformation.cs" />
     <Compile Include="Transformations.cs" />
   </ItemGroup>
   <ItemGroup>

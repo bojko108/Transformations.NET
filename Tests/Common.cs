@@ -10,7 +10,7 @@ namespace BojkoSoft.Transformations.Tests
 {
     public static class Common
     {
-        public static readonly double DELTA_OLD_BGS = 0.1;          // 10cm
+        public static readonly double DELTA_OLD_BGS = 0.2;          // 10cm
         public static readonly double DELTA_METERS = 0.01;          //  1cm
         public static readonly double DELTA_DEGREES = 0.0000001;    //  1cm
 

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using BojkoSoft.Transformations.Constants;
 using BojkoSoft.Transformations.ControlPoints;
+using BojkoSoft.Transformations.TransformationModels;
 
 namespace BojkoSoft.Transformations
 {
@@ -40,7 +41,7 @@ namespace BojkoSoft.Transformations
                 this.controlPoints.Add(enumProjection.BGS_2005_KK, new BGS2005KK());
             }
         }
-        
+
 
         #region GEOGRAPHIC AND LAMBERT
 
@@ -465,7 +466,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputProjection">input coordinates projection</param>
         /// <param name="outputProjection">output projection</param>
         /// <returns>coordinates in specified projection</returns>
-        public GeoPoint TransformBGSCoordinates(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK)
+        public GeoPoint TransformBGSCoordinates(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK, bool useTPS = true)
         {
             double distance = 20000;
 
@@ -480,13 +481,17 @@ namespace BojkoSoft.Transformations
             List<GeoPoint> inputGeoPoints = inputControlPoints.GetPoints(inputPoint, distance);
             List<GeoPoint> outputGeoPoints = outputControlPoints.GetPoints(inputGeoPoints.Select(p => p.ID).ToArray());
 
-            double a1 = 0, b1 = 0, a2 = 0, b2 = 0, c1 = 0, c2 = 0;
+            #region transform using Affine or TPS transformation
 
-            Helpers.CalculateAffineTransformationParameters(inputGeoPoints.Count, inputGeoPoints, outputGeoPoints, out a1, out a2, out b1, out b2, out c1, out c2);
+            ITransformation transformation;
+            if (useTPS)
+                transformation = new TPSTransformation(inputGeoPoints, outputGeoPoints);
+            else
+                transformation = new AffineTransformation(inputGeoPoints, outputGeoPoints);
 
-            GeoPoint resultPoint = new GeoPoint();
-            resultPoint.X = a1 * inputPoint.X + b1 * inputPoint.Y + c1;
-            resultPoint.Y = b2 * inputPoint.X + a2 * inputPoint.Y + c2;
+            GeoPoint resultPoint = transformation.Transform(inputPoint);
+
+            #endregion
 
             if (outputProjection == enumProjection.BGS_SOFIA)
             {

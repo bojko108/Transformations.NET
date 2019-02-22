@@ -125,6 +125,15 @@ namespace BojkoSoft.Transformations
         }
 
         /// <summary>
+        /// Clone this point
+        /// </summary>
+        /// <returns>new GeoPoint</returns>
+        public GeoPoint Clone()
+        {
+            return new GeoPoint(this.ID, this.X, this.Y, this.Z);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <returns></returns>

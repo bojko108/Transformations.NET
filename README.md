@@ -379,6 +379,6 @@ This project depends on [KDBush](https://github.com/marchello2000/kdbush) projec
 
 Check [Tests](https://github.com/bojko108/Transformations.NET/tree/master/Tests) project for more information.
 
-## License
+# License
 
 Transformations is [MIT](https://choosealicense.com/licenses/mit/) License @ bojko108
