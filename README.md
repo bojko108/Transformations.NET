@@ -20,6 +20,7 @@ Transform coordinates between various coordinate systems used in Bulgaria.
   - [Transform between geographic and geocentric coordinates](#transform-between-geographic-and-geocentric-coordinates)
   - [Transform between BGS coordinates](#transform-between-bgs-coordinates)
   - [Format decimal degrees from/to degrees, minutes and seconds](#format-decimal-degrees-from/to-degrees,-minutes-and-seconds)
+- [TODO](#todo)
 - [Dependencies](#dependencies)
 - [Tests](#tests)
 - [License](#license)
@@ -27,6 +28,7 @@ Transform coordinates between various coordinate systems used in Bulgaria.
 ## Info
 
 The project can be used for transforming coordinates between various coordinate systems:
+
 - BGS 1930
 - BGS 1950
 - BGS Sofia
@@ -34,17 +36,21 @@ The project can be used for transforming coordinates between various coordinate 
 - BGS 2005
 
 Following projections are available:
+
 - Lambert Conformal Conic with 2SP
 - Universal Transverse Mercator
 - Gauss–Krüger
 - Spherical Web Mercator
 
 You can transform between:
+
 - Geographic coordinates
 - Projected coordinates
 - Geocentric coordinates
 
-Transformations between BGS coordinate systems is done by calculating transformation parameters for affine transformation based on predefined control points ([ControlPoints namespace](https://github.com/bojko108/Transformations.NET/tree/master/Transformations/ControlPoints)). All other transformations are done directly as the transformation parameters are known. Precision is arround **`20cm`**.
+Transformations between BGS coordinate systems are done by calculating transformation parameters for Affine or Thin Plate SPlite (TPS) transformation based on predefined control points ([ControlPoints namespace](https://github.com/bojko108/Transformations.NET/tree/master/Transformations/ControlPoints)). You can control what type of transformation is used by passing `useTPS` boolean parameter to `TransformBGSCoordinates()`. All other transformations are done directly as the transformation parameters are known.
+
+The library is available in JavaScript too: [transformations](http://github.com/bojko108/transformations).
 
 ## How to use
 
@@ -130,7 +136,7 @@ public GeoPoint TransformGeocentricToGeographic(GeoPoint inputPoint, enumEllipso
 - Transform projected coordinates between BGS coordinate systems
 
 ```csharp
-public GeoPoint TransformBGSCoordinates(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK)
+public GeoPoint TransformBGSCoordinates(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK, bool useTPS = true)
 ```
 
 - Format geographic coordinates from decimal degrees to degrees, minutes and seconds
@@ -148,21 +154,22 @@ public double ConvertDMStoDecimalDegrees(string DMS)
 ### GeoPoint
 
 Represents a point that will be or is transformed. Coordinates hold different values for different coordinate systems:
+
 - X coordinate:
-    - Geographic: represents Latitude
-    - Lambert: represents Northing
-    - UTM: represents Northing
-    - Old BGS: represents X
-    - Cartesian: y
+  - Geographic: represents Latitude
+  - Lambert: represents Northing
+  - UTM: represents Northing
+  - Old BGS: represents X
+  - Cartesian: y
 - Y coordinate:
-    - Geographic: represents Longitude
-    - Lambert: represents Easting
-    - UTM: represents Easting
-    - Old BGS: represents Y
-    - Cartesian: x
+  - Geographic: represents Longitude
+  - Lambert: represents Easting
+  - UTM: represents Easting
+  - Old BGS: represents Y
+  - Cartesian: x
 - Z coordinate
-    - in geocentric: Z
-    - in others: Elevation
+  - in geocentric: Z
+  - in others: Elevation
 
 ### Ellipsoids
 
@@ -370,6 +377,12 @@ string dms = "422011.5512000000052";
 double result = tr.ConvertDMStoDecimalDegrees(dms);
 // result is: 42.336542
 ```
+
+# TODO
+
+- Transform array of points
+- Fix GeoPoint constructor when used like: `new GeoPoint(int id, double X, double Y)`
+- Implement Polynomial transformation
 
 # Dependencies
 

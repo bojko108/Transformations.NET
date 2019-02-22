@@ -465,6 +465,7 @@ namespace BojkoSoft.Transformations
         /// <param name="inputPoint">input projected coordinates in BGS 1930, BGS1950, BGS 1970 or BGS 2005</param>
         /// <param name="inputProjection">input coordinates projection</param>
         /// <param name="outputProjection">output projection</param>
+        /// <param name="useTPS">use TPS or Affine transformations</param>
         /// <returns>coordinates in specified projection</returns>
         public GeoPoint TransformBGSCoordinates(GeoPoint inputPoint, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK, bool useTPS = true)
         {
