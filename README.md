@@ -195,6 +195,7 @@ using BojkoSoft.Transformations.Constants;
 using BojkoSoft.Transformations.Constants;
 ```
 
+- WGS84_GEOGRAPHIC (EPSG:4326) - geographic coordinates with WGS84 ellipsoid
 - BGS_SOFIA - BGS Sofia. Local projection based on BGS 1950
 - BGS_1930_24 - Gauss–Krüger projection based on Hayford ellipsoid
 - BGS_1930_27 - Gauss–Krüger projection based on Hayford ellipsoid
@@ -206,9 +207,9 @@ using BojkoSoft.Transformations.Constants;
 - BGS_1970_K5 - ~ Southeast Bulgaria
 - BGS_1970_K7 - ~ Northeast Bulgaria
 - BGS_1970_K9 - ~ Southwest Bulgaria
-- BGS_2005_KK - Lambert Conformal Conic with 2SP used by Cadastral Agency
-- UTM34N - Universal Transverse Mercator zone 34 North
-- UTM35N - Universal Transverse Mercator zone 35 North
+- BGS_2005_KK (EPSG:7801) - Lambert Conformal Conic with 2SP used by Cadastral Agency
+- UTM34N (EPSG:32634) - Universal Transverse Mercator zone 34 North
+- UTM35N (EPSG:32635) - Universal Transverse Mercator zone 35 North
 
 ## Examples
 

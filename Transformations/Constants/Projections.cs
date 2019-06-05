@@ -8,61 +8,65 @@ namespace BojkoSoft.Transformations.Constants
     public enum enumProjection
     {
         /// <summary>
+        /// Geographic coordiantes on WGS84 Ellipsoid
+        /// </summary>
+        WGS84_GEOGRAPHIC = 4326,
+        /// <summary>
         /// BGS Sofia. Local projection based on BGS 1950
         /// </summary>
-        BGS_SOFIA,
+        BGS_SOFIA = 108001,
         /// <summary>
         /// Gauss projection based on Hayford ellipsoid
         /// </summary>
-        BGS_1930_24,
+        BGS_1930_24 = 108002,
         /// <summary>
         /// Gauss projection based on Hayford ellipsoid
         /// </summary>
-        BGS_1930_27,
+        BGS_1930_27 = 108003,
         /// <summary>
         /// Gauss projection based on Krassovsky ellipsoid
         /// </summary>
-        BGS_1950_3_24,
+        BGS_1950_3_24 = 108004,
         /// <summary>
         /// Gauss projection based on Krassovsky ellipsoid
         /// </summary>
-        BGS_1950_3_27,
+        BGS_1950_3_27 = 108005,
         /// <summary>
         /// Gauss projection based on Krassovsky ellipsoid
         /// </summary>
-        BGS_1950_6_21,
+        BGS_1950_6_21 = 108006,
         /// <summary>
         /// Gauss projection based on Krassovsky ellipsoid
         /// </summary>
-        BGS_1950_6_27,
+        BGS_1950_6_27 = 108007,
         /// <summary>
         /// ~ Northewest Bulgaria
         /// </summary>
-        BGS_1970_K3,
+        BGS_1970_K3 = 108008,
         /// <summary>
         /// ~ Southeast Bulgaria
         /// </summary>
-        BGS_1970_K5,
+        BGS_1970_K5 = 108009,
         /// <summary>
         /// ~ Northeast Bulgaria
         /// </summary>
-        BGS_1970_K7,
+        BGS_1970_K7 = 108010,
         /// <summary>
         /// ~ Southwest Bulgaria
         /// </summary>
-        BGS_1970_K9,
+        BGS_1970_K9 = 108011,
         /// <summary>
         /// Lambert Conformal Conic with 2SP used by Cadastral Agency
         /// </summary>
-        BGS_2005_KK,
+        BGS_2005_KK = 7801,
         /// <summary>
         /// UTM zone 34 North
         /// </summary>
-        UTM34N,
+        UTM34N = 32634,
         /// <summary>
         /// UTM zone 35 North
         /// </summary>
-        UTM35N
+        UTM35N = 32635
     }
 
     /// <summary>
@@ -104,6 +108,7 @@ namespace BojkoSoft.Transformations.Constants
         private void Init()
         {
             // set ellipsoids!!!
+            this.projections.Add(enumProjection.WGS84_GEOGRAPHIC, new Projection("WGS84"));
             this.projections.Add(enumProjection.BGS_SOFIA, new Projection(4680000, 8400000));
             this.projections.Add(enumProjection.BGS_1930_24, new Projection(24, 8500000.0, 0.9999));
             this.projections.Add(enumProjection.BGS_1930_27, new Projection(27, 9500000, 0.9999));
