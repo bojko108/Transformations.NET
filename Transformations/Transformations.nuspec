@@ -12,7 +12,7 @@
     <description>Transformations.NET - transforms coordinates between various coordinate systems used in Bulgaria.</description>
     <copyright>Copyright 2019</copyright>
     <tags>coordinates convert WGS84 lambert mercator gauss-kruger kdbush spatial index</tags>
-    <releaseNotes>Add WGS84 projection + WKIDs in enumProjections</releaseNotes>
+    <releaseNotes>merge with #2: add all control points in BGS1970</releaseNotes>
     <dependencies>
       <dependency id="KDBush" version="1.0.11" />
     </dependencies>
