@@ -23,11 +23,12 @@ namespace BojkoSoft.Transformations.Tests
             if (checkZ)
             {
                 double deltaZ = Math.Abs(expected.Z - result.Z);
-                Assert.IsTrue(deltaZ <= delta, "H, N or Z is not calculated correctly");
+                Assert.IsTrue(deltaZ <= delta, "dZ is too high: " + deltaZ);
                 Console.WriteLine(String.Format("expected: {0}\nreceived: {1}\ndeltaX: {2}\ndeltaY: {3}\ndeltaZ: {4}", expected.ToString(), result.ToString(), deltaX, deltaY, deltaZ));
             }
             else
             {
+                Assert.IsTrue(dS <= delta, "dS is too high: " + dS);
                 Console.WriteLine(String.Format("expected: {0}; result: {1}\ndS: {2}", expected, result, dS));
             }
         }

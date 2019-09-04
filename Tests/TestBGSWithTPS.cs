@@ -19,7 +19,7 @@ namespace BojkoSoft.Transformations.Tests
             GeoPoint expected = new GeoPoint(4728401.432, 483893.508);
             GeoPoint result = this.tr.TransformBGSCoordinates(input, enumProjection.BGS_1930_24, enumProjection.BGS_2005_KK);
             Common.CheckResults(expected, result, Common.DELTA_BGS);
-
+            
             // 27 degrees
             input = new GeoPoint(4729531.133, 9361175.733);
             result = this.tr.TransformBGSCoordinates(input, enumProjection.BGS_1930_27, enumProjection.BGS_2005_KK);
@@ -183,6 +183,16 @@ namespace BojkoSoft.Transformations.Tests
 
         // same as above tests
 
+        [TestMethod()]
+        public void PointCloseToBorder()
+        {
+            // k3 : k9
+            GeoPoint input = new GeoPoint(4753610.10997237, 318581.541736281);
+            GeoPoint expected = new GeoPoint(4625700.505, 8494949.232);
+            GeoPoint result = this.tr.TransformBGSCoordinates(input, enumProjection.BGS_2005_KK, enumProjection.BGS_1970_K9);
+            Common.CheckResults(expected, result, Common.DELTA_BGS);
+        }
+        
         #endregion region
     }
 }
