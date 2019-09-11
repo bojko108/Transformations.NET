@@ -554,7 +554,181 @@ namespace BojkoSoft.Transformations
 
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="inputPoint"></param>
+        /// <param name="sourceProjection"></param>
+        /// <param name="targetProjection"></param>
+        /// <returns></returns>
+        public GeoPoint Transform(GeoPoint inputPoint, enumProjection sourceProjection, enumProjection targetProjection, bool useTPS = true)
+        {
+            GeoPoint outputPoint = inputPoint.Clone();
 
+            switch (sourceProjection)
+            {
+                case enumProjection.BGS_SOFIA:
+                case enumProjection.BGS_1930_24:
+                case enumProjection.BGS_1930_27:
+                case enumProjection.BGS_1950_3_24:
+                case enumProjection.BGS_1950_3_27:
+                case enumProjection.BGS_1950_6_21:
+                case enumProjection.BGS_1950_6_27:
+                case enumProjection.BGS_1970_K3:
+                case enumProjection.BGS_1970_K5:
+                case enumProjection.BGS_1970_K7:
+                case enumProjection.BGS_1970_K9:
+                    {
+                        switch (targetProjection)
+                        {
+                            case enumProjection.BGS_SOFIA:
+                            case enumProjection.BGS_1930_24:
+                            case enumProjection.BGS_1930_27:
+                            case enumProjection.BGS_1950_3_24:
+                            case enumProjection.BGS_1950_3_27:
+                            case enumProjection.BGS_1950_6_21:
+                            case enumProjection.BGS_1950_6_27:
+                            case enumProjection.BGS_1970_K3:
+                            case enumProjection.BGS_1970_K5:
+                            case enumProjection.BGS_1970_K7:
+                            case enumProjection.BGS_1970_K9:
+                            case enumProjection.BGS_2005_KK:
+                                {
+                                    outputPoint = this.TransformBGSCoordinates(inputPoint, sourceProjection, targetProjection, useTPS);
+                                    break;
+                                }
+                            case enumProjection.UTM34N:
+                            case enumProjection.UTM35N:
+                                {
+                                    outputPoint = this.TransformBGSCoordinates(inputPoint, sourceProjection, enumProjection.BGS_2005_KK, useTPS);
+                                    outputPoint = this.TransformLambertToGeographic(outputPoint);
+                                    outputPoint = this.TransformGeographicToUTM(outputPoint, targetProjection);
+                                    break;
+                                }
+                            case enumProjection.WGS84_GEOGRAPHIC:
+                                {
+                                    outputPoint = this.TransformBGSCoordinates(inputPoint, sourceProjection, enumProjection.BGS_2005_KK, useTPS);
+                                    outputPoint = this.TransformLambertToGeographic(outputPoint);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+                case enumProjection.BGS_2005_KK:
+                    {
+                        switch (targetProjection)
+                        {
+                            case enumProjection.BGS_SOFIA:
+                            case enumProjection.BGS_1930_24:
+                            case enumProjection.BGS_1930_27:
+                            case enumProjection.BGS_1950_3_24:
+                            case enumProjection.BGS_1950_3_27:
+                            case enumProjection.BGS_1950_6_21:
+                            case enumProjection.BGS_1950_6_27:
+                            case enumProjection.BGS_1970_K3:
+                            case enumProjection.BGS_1970_K5:
+                            case enumProjection.BGS_1970_K7:
+                            case enumProjection.BGS_1970_K9:
+                                {
+                                    outputPoint = this.TransformBGSCoordinates(inputPoint, sourceProjection, targetProjection, useTPS);
+                                    break;
+                                }
+                            case enumProjection.UTM34N:
+                            case enumProjection.UTM35N:
+                                {
+                                    outputPoint = this.TransformLambertToGeographic(inputPoint);
+                                    outputPoint = this.TransformGeographicToUTM(outputPoint, targetProjection);
+                                    break;
+                                }
+                            case enumProjection.WGS84_GEOGRAPHIC:
+                                {
+                                    outputPoint = this.TransformLambertToGeographic(inputPoint);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+                case enumProjection.UTM34N:
+                case enumProjection.UTM35N:
+                    {
+                        switch (targetProjection)
+                        {
+                            case enumProjection.BGS_SOFIA:
+                            case enumProjection.BGS_1930_24:
+                            case enumProjection.BGS_1930_27:
+                            case enumProjection.BGS_1950_3_24:
+                            case enumProjection.BGS_1950_3_27:
+                            case enumProjection.BGS_1950_6_21:
+                            case enumProjection.BGS_1950_6_27:
+                            case enumProjection.BGS_1970_K3:
+                            case enumProjection.BGS_1970_K5:
+                            case enumProjection.BGS_1970_K7:
+                            case enumProjection.BGS_1970_K9:
+                                {
+                                    outputPoint = this.TransformUTMToGeographic(inputPoint, sourceProjection);
+                                    outputPoint = this.TransformGeographicToLambert(outputPoint);
+                                    outputPoint = this.TransformBGSCoordinates(outputPoint, enumProjection.BGS_2005_KK, targetProjection, useTPS);
+                                    break;
+                                }
+                            case enumProjection.BGS_2005_KK:
+                                {
+                                    outputPoint = this.TransformUTMToGeographic(inputPoint, sourceProjection);
+                                    outputPoint = this.TransformGeographicToLambert(outputPoint);
+                                    break;
+                                }
+                            case enumProjection.UTM34N:
+                            case enumProjection.UTM35N:
+                                {
+                                    outputPoint = this.TransformUTMToGeographic(inputPoint, sourceProjection);
+                                    outputPoint = this.TransformGeographicToUTM(inputPoint, targetProjection);
+                                    break;
+                                }
+                            case enumProjection.WGS84_GEOGRAPHIC:
+                                {
+                                    outputPoint = this.TransformUTMToGeographic(inputPoint, sourceProjection);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+                case enumProjection.WGS84_GEOGRAPHIC:
+                    {
+                        switch (targetProjection)
+                        {
+                            case enumProjection.BGS_SOFIA:
+                            case enumProjection.BGS_1930_24:
+                            case enumProjection.BGS_1930_27:
+                            case enumProjection.BGS_1950_3_24:
+                            case enumProjection.BGS_1950_3_27:
+                            case enumProjection.BGS_1950_6_21:
+                            case enumProjection.BGS_1950_6_27:
+                            case enumProjection.BGS_1970_K3:
+                            case enumProjection.BGS_1970_K5:
+                            case enumProjection.BGS_1970_K7:
+                            case enumProjection.BGS_1970_K9:
+                                {
+                                    outputPoint = this.TransformGeographicToLambert(outputPoint);
+                                    outputPoint = this.TransformBGSCoordinates(outputPoint, enumProjection.BGS_2005_KK, targetProjection, useTPS);
+                                    break;
+                                }
+                            case enumProjection.BGS_2005_KK:
+                                {
+                                    outputPoint = this.TransformGeographicToLambert(outputPoint);
+                                    break;
+                                }
+                            case enumProjection.UTM34N:
+                            case enumProjection.UTM35N:
+                                {
+                                    outputPoint = this.TransformGeographicToUTM(inputPoint, targetProjection);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+            }
+
+            return outputPoint;
+        }
 
 
 
