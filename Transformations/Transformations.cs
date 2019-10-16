@@ -553,7 +553,6 @@ namespace BojkoSoft.Transformations
         #endregion
 
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -567,9 +566,44 @@ namespace BojkoSoft.Transformations
 
             switch (sourceProjection)
             {
-                case enumProjection.BGS_SOFIA:
                 case enumProjection.BGS_1930_24:
                 case enumProjection.BGS_1930_27:
+                    {
+                        switch (targetProjection)
+                        {
+                            case enumProjection.BGS_SOFIA:
+                            case enumProjection.BGS_1930_24:
+                            case enumProjection.BGS_1930_27:
+                            case enumProjection.BGS_1950_3_24:
+                            case enumProjection.BGS_1950_3_27:
+                            case enumProjection.BGS_1950_6_21:
+                            case enumProjection.BGS_1950_6_27:
+                            case enumProjection.BGS_1970_K3:
+                            case enumProjection.BGS_1970_K5:
+                            case enumProjection.BGS_1970_K7:
+                            case enumProjection.BGS_1970_K9:
+                            case enumProjection.BGS_2005_KK:
+                                {
+                                    outputPoint = this.TransformBGSCoordinates(inputPoint, sourceProjection, targetProjection, useTPS);
+                                    break;
+                                }
+                            case enumProjection.UTM34N:
+                            case enumProjection.UTM35N:
+                                {
+                                    outputPoint = this.TransformBGSCoordinates(inputPoint, sourceProjection, enumProjection.BGS_2005_KK, useTPS);
+                                    outputPoint = this.TransformLambertToGeographic(outputPoint);
+                                    outputPoint = this.TransformGeographicToUTM(outputPoint, targetProjection);
+                                    break;
+                                }
+                            case enumProjection.WGS84_GEOGRAPHIC:
+                                {
+                                    outputPoint = this.TransformGaussToGeographic(inputPoint, sourceProjection);
+                                    break;
+                                }
+                        }
+                        break;
+                    }
+                case enumProjection.BGS_SOFIA:
                 case enumProjection.BGS_1950_3_24:
                 case enumProjection.BGS_1950_3_27:
                 case enumProjection.BGS_1950_6_21:
@@ -695,9 +729,11 @@ namespace BojkoSoft.Transformations
                     {
                         switch (targetProjection)
                         {
-                            case enumProjection.BGS_SOFIA:
                             case enumProjection.BGS_1930_24:
                             case enumProjection.BGS_1930_27:
+                                outputPoint = this.TransformGeographicToGauss(outputPoint);
+                                break;
+                            case enumProjection.BGS_SOFIA:
                             case enumProjection.BGS_1950_3_24:
                             case enumProjection.BGS_1950_3_27:
                             case enumProjection.BGS_1950_6_21:
