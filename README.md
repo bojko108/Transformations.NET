@@ -19,6 +19,7 @@ Transform coordinates between various coordinate systems used in Bulgaria.
   - [Transform between geographic coordinates and projected in Web Mercator](#transform-between-geographic-coordinates-and-projected-in-web-mercator)
   - [Transform between geographic and geocentric coordinates](#transform-between-geographic-and-geocentric-coordinates)
   - [Transform between BGS coordinates](#transform-between-bgs-coordinates)
+  - [Transform by calculating transformation parameters for an extent](#transform-by-calculating-transformation-parameters-for-an-extent)
   - [Format decimal degrees from/to degrees, minutes and seconds](#format-decimal-degrees-from/to-degrees,-minutes-and-seconds)
 - [TODO](#todo)
 - [Dependencies](#dependencies)
@@ -49,6 +50,8 @@ You can transform between:
 - Geocentric coordinates
 
 Transformations between BGS coordinate systems are done by calculating transformation parameters for Affine or Thin Plate SPlite (TPS) transformation based on predefined control points ([ControlPoints namespace](https://github.com/bojko108/Transformations.NET/tree/master/Transformations/ControlPoints)). You can control what type of transformation is used by passing `useTPS` boolean parameter to `TransformBGSCoordinates()`. All other transformations are done directly as the transformation parameters are known.
+
+Optionally you can calculate transformation parameters for affine transformation valid for specific region and use them to calculate points more quickly, but with less precission.
 
 The library is available in JavaScript too: [transformations](http://github.com/bojko108/transformations).
 
@@ -149,6 +152,12 @@ public string ConvertDecimalDegreesToDMS(double DEG)
 
 ```csharp
 public double ConvertDMStoDecimalDegrees(string DMS)
+```
+
+- Calculate Affine transformation parameters for a region
+
+```csharp
+public double[] CalculateAffineTransformationParameters(GeoExtent inputExtent, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK)
 ```
 
 ### GeoPoint
@@ -363,6 +372,26 @@ GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_1970_K9, 
 GeoPoint input = new GeoPoint(4675440.847, 330568.434);
 GeoPoint result = tr.TransformBGSCoordinates(input, enumProjection.BGS_2005_KK, enumProjection.BGS_1970_K9);
 // result is: 4547844.965, 8508858.203
+```
+
+### Transform by calculating transformation parameters for an extent
+
+- You first provide the extent and calculate transformation parameters usi.......................
+
+```csharp
+GeoExtent extent = new GeoExtent(4590706, 4556298, 8561889, 8519105);
+// optionaly you can expand the provided extent:
+// extent.Expand(20000);
+
+Transformations tr = new Transformations();
+
+// calculate transformation parameters
+double[] parameters = tr.CalculateAffineTransformationParameters(extent, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
+
+// transform input point with calculated parameters
+GeoPoint input = new GeoPoint(4573488, 8539465);
+GeoPoint result = tr.TransformBGSCoordinates(input, parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
+// result is: 4700322.190, 361795.526
 ```
 
 ### Format decimal degrees from/to degrees, minutes and seconds

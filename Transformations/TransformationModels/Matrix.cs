@@ -7,7 +7,7 @@ namespace BojkoSoft.Transformations.TransformationModels
     /// </summary>
     internal class Matrix
     {
-        private double[,] data;
+        private readonly double[,] data;
 
         /// <summary>
         /// Creates a new Matrix with specified size
