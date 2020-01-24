@@ -21,8 +21,8 @@
         /// <param name="southWestCorner"></param>
         public GeoExtent(GeoPoint northEastCorner, GeoPoint southWestCorner)
         {
-            this.NorthEastCorner = northEastCorner;
-            this.SouthWestCorner = southWestCorner;
+            this.NorthEastCorner = northEastCorner.Clone();
+            this.SouthWestCorner = southWestCorner.Clone();
         }
 
         /// <summary>
@@ -36,6 +36,23 @@
         {
             this.NorthEastCorner = new GeoPoint(northingMax, eastingMax);
             this.SouthWestCorner = new GeoPoint(northingMin, eastingMin);
+        }
+
+        public void Expand(double meters)
+        {
+            this.NorthEastCorner.X += meters;
+            this.NorthEastCorner.Y += meters;
+            this.SouthWestCorner.X -= meters;
+            this.SouthWestCorner.Y -= meters;
+        }
+
+        /// <summary>
+        /// Clone this extent
+        /// </summary>
+        /// <returns>new GeoExtent</returns>
+        public GeoExtent Clone()
+        {
+            return new GeoExtent(this.NorthEastCorner.Clone(), this.SouthWestCorner.Clone());
         }
     }
 }

@@ -63,6 +63,7 @@
     <Compile Include="TestGeographicAndWebMercator.cs" />
     <Compile Include="TransformationsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AffineTransformationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

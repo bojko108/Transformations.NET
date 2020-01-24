@@ -43,6 +43,27 @@ namespace BojkoSoft.Transformations
         }
 
 
+        public double[] CalculateAffineTransformationParameters(GeoExtent inputExtent, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK)
+        {
+            if (inputProjection == enumProjection.BGS_SOFIA)
+            {
+                inputExtent.NorthEastCorner.X += this.projections[inputProjection].X0;
+                inputExtent.NorthEastCorner.Y += this.projections[inputProjection].Y0;
+
+                inputExtent.SouthWestCorner.X += this.projections[inputProjection].X0;
+                inputExtent.SouthWestCorner.Y += this.projections[inputProjection].Y0;
+            }
+
+            ControlPointsClass inputControlPoints = inputProjection == enumProjection.BGS_SOFIA ? this.controlPoints[enumProjection.BGS_1950_3_24] : this.controlPoints[inputProjection];
+            ControlPointsClass outputControlPoints = outputProjection == enumProjection.BGS_SOFIA ? this.controlPoints[enumProjection.BGS_1950_3_24] : this.controlPoints[outputProjection];
+            List<GeoPoint> inputGeoPoints = inputControlPoints.GetPoints(inputExtent);
+            List<GeoPoint> outputGeoPoints = outputControlPoints.GetPoints(inputGeoPoints.Select(p => p.ID).ToArray());
+
+            AffineTransformation transformation = new AffineTransformation(inputGeoPoints, outputGeoPoints);
+            return transformation.GetParameters();
+        }
+
+
         #region GEOGRAPHIC AND LAMBERT
 
         /// <summary>
@@ -493,6 +514,36 @@ namespace BojkoSoft.Transformations
             GeoPoint resultPoint = transformation.Transform(inputPoint);
 
             #endregion
+
+            if (outputProjection == enumProjection.BGS_SOFIA)
+            {
+                resultPoint.X -= this.projections[outputProjection].X0;
+                resultPoint.Y -= this.projections[outputProjection].Y0;
+            }
+
+            return resultPoint;
+        }
+
+        /// <summary>
+        /// Transforms from BGS 1930, BGS1950, BGS Sofia, BGS 1970 or BGS 2005 projected coordinates to the specified projection.
+        /// Transforms a point with provided transformation parameters.
+        /// </summary>
+        /// <param name="inputPoint">input projected coordinates in BGS 1930, BGS1950, BGS 1970 or BGS 2005</param>
+        /// <param name="affineTransformationParameters"></param>
+        /// <param name="inputProjection">input coordinates projection</param>
+        /// <param name="outputProjection">output projection</param>
+        /// <returns>coordinates in specified projection</returns>
+        public GeoPoint TransformBGSCoordinates(GeoPoint inputPoint, double[] affineTransformationParameters, enumProjection inputProjection = enumProjection.BGS_1970_K9, enumProjection outputProjection = enumProjection.BGS_2005_KK)
+        {
+            if (inputProjection == enumProjection.BGS_SOFIA)
+            {
+                inputPoint.X += this.projections[inputProjection].X0;
+                inputPoint.Y += this.projections[inputProjection].Y0;
+            }
+
+            AffineTransformation transformation = new AffineTransformation(affineTransformationParameters);
+
+            GeoPoint resultPoint = transformation.Transform(inputPoint);
 
             if (outputProjection == enumProjection.BGS_SOFIA)
             {
