@@ -14,47 +14,47 @@ namespace BojkoSoft.Transformations.Constants
         /// <summary>
         /// BGS Sofia. Local projection based on BGS 1950
         /// </summary>
-        BGS_SOFIA = 108001,
+        BGS_SOFIA = 108501,
         /// <summary>
         /// Gauss projection based on Hayford ellipsoid
         /// </summary>
-        BGS_1930_24 = 108002,
+        BGS_1930_24 = 1083024,
         /// <summary>
         /// Gauss projection based on Hayford ellipsoid
         /// </summary>
-        BGS_1930_27 = 108003,
+        BGS_1930_27 = 1083027,
         /// <summary>
         /// Gauss projection based on Krassovsky ellipsoid
         /// </summary>
-        BGS_1950_3_24 = 108004,
+        BGS_1950_3_24 = 10850324,
         /// <summary>
         /// Gauss projection based on Krassovsky ellipsoid
         /// </summary>
-        BGS_1950_3_27 = 108005,
+        BGS_1950_3_27 = 10850327,
         /// <summary>
         /// Gauss projection based on Krassovsky ellipsoid
         /// </summary>
-        BGS_1950_6_21 = 108006,
+        BGS_1950_6_21 = 10850621,
         /// <summary>
         /// Gauss projection based on Krassovsky ellipsoid
         /// </summary>
-        BGS_1950_6_27 = 108007,
+        BGS_1950_6_27 = 10850627,
         /// <summary>
         /// ~ Northewest Bulgaria
         /// </summary>
-        BGS_1970_K3 = 108008,
+        BGS_1970_K3 = 108703,
         /// <summary>
         /// ~ Southeast Bulgaria
         /// </summary>
-        BGS_1970_K5 = 108009,
+        BGS_1970_K5 = 108705,
         /// <summary>
         /// ~ Northeast Bulgaria
         /// </summary>
-        BGS_1970_K7 = 108010,
+        BGS_1970_K7 = 108707,
         /// <summary>
         /// ~ Southwest Bulgaria
         /// </summary>
-        BGS_1970_K9 = 108011,
+        BGS_1970_K9 = 108709,
         /// <summary>
         /// Lambert Conformal Conic with 2SP used by Cadastral Agency
         /// </summary>

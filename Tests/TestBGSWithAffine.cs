@@ -145,6 +145,12 @@ namespace BojkoSoft.Transformations.Tests
             GeoPoint result = this.tr.Transform(input, enumProjection.BGS_1970_K3, enumProjection.BGS_2005_KK, false);
             Common.CheckResults(expected, result, Common.DELTA_BGS);
 
+            input = new GeoPoint(4687680.0628, 8557573.3751);
+            expected = new GeoPoint(4777555.3496506, 373330.7458905);
+            result = this.tr.Transform(input, enumProjection.BGS_1970_K3, enumProjection.BGS_2005_KK, false);
+            Common.CheckResults(expected, result, Common.DELTA_BGS);
+
+
             // K5
             input = new GeoPoint(4613479.192, 9493233.633);
             expected = new GeoPoint(4679669.825, 569554.918);

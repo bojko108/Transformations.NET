@@ -13,6 +13,36 @@
         /// South west corner of the extent: min latitude and longitude
         /// </summary>
         public GeoPoint SouthWestCorner { get; private set; }
+        /// <summary>
+        /// Represents the width of this extent in meters
+        /// </summary>
+        public double Width
+        {
+            get
+            {
+                return this.NorthEastCorner.Y - this.SouthWestCorner.Y;
+            }
+        }
+        /// <summary>
+        /// Represents the height of this extent in meters
+        /// </summary>
+        public double Height
+        {
+            get
+            {
+                return this.NorthEastCorner.X - this.SouthWestCorner.X;
+            }
+        }
+        /// <summary>
+        /// Returns True if this extent is empty: width and height are 0
+        /// </summary>
+        public bool IsEmpty
+        {
+            get
+            {
+                return this.Width <= 0 && this.Height <= 0;
+            }
+        }
 
         /// <summary>
         /// Creates a new extent by specifying corner points
@@ -39,7 +69,7 @@
         }
 
         /// <summary>
-        /// Increase this extent with provided value in meters
+        /// Increases this extent with provided value in meters
         /// </summary>
         /// <param name="meters">you can use negative values to shrink the extent</param>
         public void Expand(double meters)
