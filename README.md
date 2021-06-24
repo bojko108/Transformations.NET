@@ -219,6 +219,7 @@ using BojkoSoft.Transformations.Constants;
 - BGS_2005_KK (EPSG:7801) - Lambert Conformal Conic with 2SP used by Cadastral Agency
 - UTM34N (EPSG:32634) - Universal Transverse Mercator zone 34 North
 - UTM35N (EPSG:32635) - Universal Transverse Mercator zone 35 North
+- Unknown - unknown projection (coordinate system)
 
 ## Examples
 
@@ -424,4 +425,4 @@ Check [Tests](https://github.com/bojko108/Transformations.NET/tree/master/Tests)
 
 # License
 
-Transformations is [MIT](https://choosealicense.com/licenses/mit/) License @ bojko108
+Transformations.NET is [MIT](https://choosealicense.com/licenses/mit/) License @ bojko108

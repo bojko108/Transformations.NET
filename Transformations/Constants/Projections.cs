@@ -66,7 +66,11 @@ namespace BojkoSoft.Transformations.Constants
         /// <summary>
         /// UTM zone 35 North
         /// </summary>
-        UTM35N = 32635
+        UTM35N = 32635,
+        /// <summary>
+        /// Projection is unknown
+        /// </summary>
+        Unknown = 0
     }
 
     /// <summary>
