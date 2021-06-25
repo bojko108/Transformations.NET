@@ -6,15 +6,15 @@ namespace BojkoSoft.Transformations.ControlPoints
 {
     internal class ControlPointsClass
     {
-        internal KDBush<GeoPoint> tree;
-        internal List<Point<GeoPoint>> points;
+        internal KDBush<ControlPoint> tree;
+        internal List<Point<ControlPoint>> points;
 
         /// <summary>
         /// Get a control point by ID
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public GeoPoint GetPoint(int id)
+        public IPoint GetPoint(int id)
         {
             for (int i = 0; i < this.points.Count; i++)
             {
@@ -32,9 +32,9 @@ namespace BojkoSoft.Transformations.ControlPoints
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        public List<GeoPoint> GetPoints(int[] ids)
+        public List<ControlPoint> GetPoints(int[] ids)
         {
-            List<GeoPoint> result = new List<GeoPoint>();
+            List<ControlPoint> result = new List<ControlPoint>();
 
             for (int i = 0; i < this.points.Count; i++)
             {
@@ -53,9 +53,9 @@ namespace BojkoSoft.Transformations.ControlPoints
         /// <param name="point">center of circle</param>
         /// <param name="radius">radius of circle</param>
         /// <returns></returns>
-        public List<GeoPoint> GetPoints(GeoPoint point, double radius = 20000)
+        public List<ControlPoint> GetPoints(IPoint point, double radius = 20000)
         {
-            List<Point<GeoPoint>> queried = this.tree.Query(point.X, point.Y, radius);
+            List<Point<ControlPoint>> queried = this.tree.Query(point.N, point.E, radius);
             return queried.Select(p => p.UserData).OrderBy(p => p.ID).ToList();
         }
 
@@ -64,15 +64,15 @@ namespace BojkoSoft.Transformations.ControlPoints
         /// </summary>
         /// <param name="extent"></param>
         /// <returns></returns>
-        public List<GeoPoint> GetPoints(GeoExtent extent)
+        public List<ControlPoint> GetPoints(IExtent extent)
         {
-            List<Point<GeoPoint>> queried = this.tree.Query(extent.SouthWestCorner.X, extent.SouthWestCorner.Y, extent.NorthEastCorner.X, extent.NorthEastCorner.Y);
+            List<Point<ControlPoint>> queried = this.tree.Query(extent.MinN, extent.MinE, extent.MaxN, extent.MaxE);
             return queried.Select(p => p.UserData).OrderBy(p => p.ID).ToList();
         }
 
         internal void InitTree()
         {
-            this.tree = new KDBush<GeoPoint>();
+            this.tree = new KDBush<ControlPoint>();
             this.tree.Index(this.points);
         }
     }

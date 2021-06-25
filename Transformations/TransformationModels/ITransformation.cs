@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BojkoSoft.Transformations.TransformationModels
+﻿namespace BojkoSoft.Transformations.TransformationModels
 {
     /// <summary>
     /// Interface for using transformation models
@@ -16,6 +10,6 @@ namespace BojkoSoft.Transformations.TransformationModels
         /// </summary>
         /// <param name="inputPoint"></param>
         /// <returns></returns>
-        GeoPoint Transform(GeoPoint inputPoint);
+        IPoint Transform(IPoint inputPoint);
     }
 }

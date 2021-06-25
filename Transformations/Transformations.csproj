@@ -37,7 +37,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KDBush, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="KDBush">
       <HintPath>..\packages\KDBush.1.0.11\lib\net461\KDBush.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -64,18 +64,17 @@
     <Compile Include="ControlPoints\BGS1970K9.cs" />
     <Compile Include="ControlPoints\BGS2005KK.cs" />
     <Compile Include="ControlPoints\ControlPointsClass.cs" />
-    <Compile Include="GeoExtent.cs" />
-    <Compile Include="Helpers.cs" />
-    <Compile Include="GeoPoint.cs" />
+    <Compile Include="Internals\GeoExtent.cs" />
+    <Compile Include="Internals\Helpers.cs" />
+    <Compile Include="Internals\ControlPoint.cs" />
+    <Compile Include="IExtent.cs" />
+    <Compile Include="IPoint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransformationModels\AffineTransformation.cs" />
     <Compile Include="TransformationModels\ITransformation.cs" />
     <Compile Include="TransformationModels\Matrix.cs" />
     <Compile Include="TransformationModels\TPSTransformation.cs" />
     <Compile Include="Transformations.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

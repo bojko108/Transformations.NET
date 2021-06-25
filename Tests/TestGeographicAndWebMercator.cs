@@ -1,19 +1,26 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Tests;
 
 namespace BojkoSoft.Transformations.Tests
 {
     [TestClass()]
     public class TestGeographicAndWebMercator
     {
-        private Transformations tr = new Transformations();
+        private static Transformations tr;
+
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            tr = new Transformations(false);
+        }
 
         [TestMethod()]
         public void TransformGeographicToWebMercatorTest()
         {
-            GeoPoint input = new GeoPoint(42.450682, 24.749747);
-            GeoPoint expected = new GeoPoint(2755129.23, 5228730.33);
-            GeoPoint result = this.tr.TransformGeographicToWebMercator(input);
+            IPoint input = new TestPoint(42.450682, 24.749747);
+            IPoint expected = new TestPoint(2755129.23, 5228730.33);
+            IPoint result = tr.TransformGeographicToWebMercator(input);
 
             Common.CheckResults(expected, result, Common.DELTA_METERS);
         }
@@ -21,9 +28,9 @@ namespace BojkoSoft.Transformations.Tests
         [TestMethod()]
         public void TransformWebMercatorToGeographicTest()
         {
-            GeoPoint input = new GeoPoint(2755129.23, 5228730.33);
-            GeoPoint expected = new GeoPoint(42.450682, 24.749747);
-            GeoPoint result = this.tr.TransformWebMercatorToGeographic(input);
+            IPoint input = new TestPoint(2755129.23, 5228730.33);
+            IPoint expected = new TestPoint(42.450682, 24.749747);
+            IPoint result = tr.TransformWebMercatorToGeographic(input);
 
             Common.CheckResults(expected, result, Common.DELTA_DEGREES);
         }

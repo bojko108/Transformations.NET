@@ -4,6 +4,7 @@ using System.Linq;
 using BojkoSoft.Transformations.Constants;
 using BojkoSoft.Transformations.TransformationModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Tests;
 
 namespace BojkoSoft.Transformations.Tests
 {
@@ -61,53 +62,53 @@ namespace BojkoSoft.Transformations.Tests
             Transformations tr = new Transformations();
 
             // K9
-            GeoPoint input = new GeoPoint(4547844.976, 8508858.179);
-            GeoPoint expected = new GeoPoint(4675440.847, 330568.434);
+            IPoint input = new TestPoint(4547844.976, 8508858.179);
+            IPoint expected = new TestPoint(4675440.847, 330568.434);
 
-            GeoPoint result = tr.TransformBGSCoordinates(input, parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
+            IPoint result = tr.TransformBGSCoordinates(input, parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
             Common.CheckResults(expected, result, Common.DELTA_BGS);
         }
 
         [TestMethod]
         public void CalculateParametersForExtent()
         {
-            GeoExtent extent = new GeoExtent(4590706, 4556298, 8561889, 8519105);
+            IExtent extent = new TestExtent(4590706, 4556298, 8561889, 8519105);
             extent.Expand(20000);
             Transformations tr = new Transformations();
             double[] parameters = tr.CalculateAffineTransformationParameters(extent, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
 
             // K9
-            GeoPoint input = new GeoPoint(4573488, 8539465);
-            GeoPoint expected = new GeoPoint(4700322.190, 361795.526);
+            IPoint input = new TestPoint(4573488, 8539465);
+            IPoint expected = new TestPoint(4700322.190, 361795.526);
 
-            GeoPoint result = tr.TransformBGSCoordinates(input, parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
+            IPoint result = tr.TransformBGSCoordinates(input, parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
 
             Common.CheckResults(expected, result, Common.DELTA_BGS_EXTENT);
 
 
-            input = new GeoPoint(4557529, 8530750);
-            expected = new GeoPoint(4684583.019, 352691.179);
+            input = new TestPoint(4557529, 8530750);
+            expected = new TestPoint(4684583.019, 352691.179);
 
             result = tr.TransformBGSCoordinates(input, parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
             Common.CheckResults(expected, result, Common.DELTA_BGS_EXTENT);
 
 
-            input = new GeoPoint(4589108, 8551915);
-            expected = new GeoPoint(4715630.512, 374624.861);
+            input = new TestPoint(4589108, 8551915);
+            expected = new TestPoint(4715630.512, 374624.861);
 
             result = tr.TransformBGSCoordinates(input, parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
             Common.CheckResults(expected, result, Common.DELTA_BGS_EXTENT);
 
 
-            input = new GeoPoint(4573488, 8517394);
-            expected = new GeoPoint(4700865.033, 339732.391);
+            input = new TestPoint(4573488, 8517394);
+            expected = new TestPoint(4700865.033, 339732.391);
 
             result = tr.TransformBGSCoordinates(input, parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
             Common.CheckResults(expected, result, Common.DELTA_BGS_EXTENT);
 
 
-            input = new GeoPoint(4574394, 8583155);
-            expected = new GeoPoint(4700154.937, 405492.239);
+            input = new TestPoint(4574394, 8583155);
+            expected = new TestPoint(4700154.937, 405492.239);
 
             result = tr.TransformBGSCoordinates(input, parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
             Common.CheckResults(expected, result, Common.DELTA_BGS_EXTENT);
@@ -116,24 +117,24 @@ namespace BojkoSoft.Transformations.Tests
         [TestMethod]
         public void BatchTransformWithParameters()
         {
-            GeoExtent extent = new GeoExtent(4590706, 4556298, 8561889, 8519105);
+            IExtent extent = new TestExtent(4590706, 4556298, 8561889, 8519105);
             extent.Expand(20000);
             Transformations tr = new Transformations();
             double[] parameters = tr.CalculateAffineTransformationParameters(extent, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
 
             int count = 100000;
-            GeoPoint[] input = new GeoPoint[count];
-            GeoPoint[] expected = new GeoPoint[count];
+            IPoint[] input = new TestPoint[count];
+            IPoint[] expected = new TestPoint[count];
             for (int i = 0; i < count; i++)
             {
-                input[i] = new GeoPoint(4573488, 8539465);
-                expected[i] = new GeoPoint(4700322.190, 361795.526);
+                input[i] = new TestPoint(4573488, 8539465);
+                expected[i] = new TestPoint(4700322.190, 361795.526);
             }
 
             // check results
             for (int i = 0; i < count; i++)
             {
-                GeoPoint result = tr.TransformBGSCoordinates(input[i], parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
+                IPoint result = tr.TransformBGSCoordinates(input[i], parameters, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK);
                 Common.CheckResults(expected[i], result, Common.DELTA_BGS_EXTENT);
             }
         }
@@ -144,18 +145,18 @@ namespace BojkoSoft.Transformations.Tests
             Transformations tr = new Transformations();
 
             int count = 100000;
-            GeoPoint[] input = new GeoPoint[count];
-            GeoPoint[] expected = new GeoPoint[count];
+            IPoint[] input = new TestPoint[count];
+            IPoint[] expected = new TestPoint[count];
             for (int i = 0; i < count; i++)
             {
-                input[i] = new GeoPoint(4573488, 8539465);
-                expected[i] = new GeoPoint(4700322.190, 361795.526);
+                input[i] = new TestPoint(4573488, 8539465);
+                expected[i] = new TestPoint(4700322.190, 361795.526);
             }
 
             // check results
             for (int i = 0; i < count; i++)
             {
-                GeoPoint result = tr.TransformBGSCoordinates(input[i], enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK, false);
+                IPoint result = tr.TransformBGSCoordinates(input[i], enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK, false);
                 Common.CheckResults(expected[i], result, Common.DELTA_BGS_EXTENT);
             }
         }

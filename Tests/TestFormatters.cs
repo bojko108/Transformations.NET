@@ -6,12 +6,12 @@ namespace BojkoSoft.Transformations.Tests
     [TestClass()]
     public class TestFormatters
     {
-        private Transformations tr;
+        private static Transformations tr;
 
-        [TestInitialize]
-        public void TestInitialize()
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
         {
-            this.tr = new Transformations();
+            tr = new Transformations(false);
         }
 
         [TestMethod()]

@@ -8,6 +8,11 @@ namespace BojkoSoft.Transformations.Constants
     public enum enumProjection
     {
         /// <summary>
+        /// Projection is unknown
+        /// </summary>
+        Unknown = -1,
+
+        /// <summary>
         /// Geographic coordiantes on WGS84 Ellipsoid
         /// </summary>
         WGS84_GEOGRAPHIC = 4326,
@@ -66,11 +71,7 @@ namespace BojkoSoft.Transformations.Constants
         /// <summary>
         /// UTM zone 35 North
         /// </summary>
-        UTM35N = 32635,
-        /// <summary>
-        /// Projection is unknown
-        /// </summary>
-        Unknown = 0
+        UTM35N = 32635
     }
 
     /// <summary>

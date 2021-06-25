@@ -55,7 +55,7 @@ namespace BojkoSoft.Transformations.TransformationModels
         /// </summary>
         /// <param name="sourcePoints">used to transform from</param>
         /// <param name="targetPoints">used to transform to</param>
-        public AffineTransformation(List<GeoPoint> sourcePoints, List<GeoPoint> targetPoints)
+        public AffineTransformation(List<IPoint> sourcePoints, List<IPoint> targetPoints)
         {
             this.CalculateAffineParameters(sourcePoints.ConvertAll(p => p.Clone()), targetPoints.ConvertAll(p => p.Clone()));
         }
@@ -65,12 +65,12 @@ namespace BojkoSoft.Transformations.TransformationModels
         /// </summary>
         /// <param name="inputPoint"></param>
         /// <returns></returns>
-        public GeoPoint Transform(GeoPoint inputPoint)
+        public IPoint Transform(IPoint inputPoint)
         {
-            GeoPoint resultPoint = new GeoPoint
+            ControlPoint resultPoint = new ControlPoint
             {
-                X = this.A * inputPoint.X + this.B * inputPoint.Y + this.C,
-                Y = this.D * inputPoint.X + this.E * inputPoint.Y + this.F
+                N = this.A * inputPoint.N + this.B * inputPoint.E + this.C,
+                E = this.D * inputPoint.N + this.E * inputPoint.E + this.F
             };
             return resultPoint;
         }
@@ -127,7 +127,7 @@ namespace BojkoSoft.Transformations.TransformationModels
         /// </summary>
         /// <param name="sourcePoints"></param>
         /// <param name="targetPoints"></param>
-        private void CalculateAffineParameters(List<GeoPoint> sourcePoints, List<GeoPoint> targetPoints)
+        private void CalculateAffineParameters(List<IPoint> sourcePoints, List<IPoint> targetPoints)
         {
             int i;
             double xcg = 0.0, ycg = 0.0, xcl = 0.0, ycl = 0.0;
@@ -137,10 +137,10 @@ namespace BojkoSoft.Transformations.TransformationModels
 
             for (i = 0; i < sourcePoints.Count; i++)
             {
-                xcg = xcg + targetPoints[i].X;
-                ycg = ycg + targetPoints[i].Y;
-                xcl = xcl + sourcePoints[i].X;
-                ycl = ycl + sourcePoints[i].Y;
+                xcg = xcg + targetPoints[i].N;
+                ycg = ycg + targetPoints[i].E;
+                xcl = xcl + sourcePoints[i].N;
+                ycl = ycl + sourcePoints[i].E;
             }
             xcg /= sourcePoints.Count;
             ycg /= sourcePoints.Count;
@@ -148,10 +148,10 @@ namespace BojkoSoft.Transformations.TransformationModels
             ycl /= sourcePoints.Count;
             for (i = 0; i < sourcePoints.Count; i++)
             {
-                targetPoints[i].X -= xcg;
-                targetPoints[i].Y -= ycg;
-                sourcePoints[i].X -= xcl;
-                sourcePoints[i].Y -= ycl;
+                targetPoints[i].N -= xcg;
+                targetPoints[i].E -= ycg;
+                sourcePoints[i].N -= xcl;
+                sourcePoints[i].E -= ycl;
             }
             double x1 = 0; double y1 = 0;
             double x2 = 0; double y2 = 0;
@@ -159,13 +159,13 @@ namespace BojkoSoft.Transformations.TransformationModels
             double x4 = 0; double n1 = 0;
             for (i = 0; i < sourcePoints.Count; i++)
             {
-                x1 += sourcePoints[i].X * targetPoints[i].X;
-                y1 += sourcePoints[i].Y * targetPoints[i].X;
-                x2 += sourcePoints[i].X * sourcePoints[i].X;
-                y2 += sourcePoints[i].Y * targetPoints[i].Y;
-                x3 += sourcePoints[i].X * targetPoints[i].Y;
-                y3 += sourcePoints[i].Y * sourcePoints[i].Y;
-                x4 += sourcePoints[i].X * sourcePoints[i].Y;
+                x1 += sourcePoints[i].N * targetPoints[i].N;
+                y1 += sourcePoints[i].E * targetPoints[i].N;
+                x2 += sourcePoints[i].N * sourcePoints[i].N;
+                y2 += sourcePoints[i].E * targetPoints[i].E;
+                x3 += sourcePoints[i].N * targetPoints[i].E;
+                y3 += sourcePoints[i].E * sourcePoints[i].E;
+                x4 += sourcePoints[i].N * sourcePoints[i].E;
             }
             this.A = (x1 * y3) - (y1 * x4);
             this.B = (y1 * x2) - (x1 * x4);

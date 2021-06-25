@@ -14,14 +14,14 @@ namespace BojkoSoft.Transformations.TransformationModels
         private int m { get; set; }
         private double[] Xc { get; set; }
         private double[] Yc { get; set; }
-        private List<GeoPoint> SourcePoints { get; set; }
+        private List<IPoint> SourcePoints { get; set; }
 
         /// <summary>
         /// Calcualtes TPS transformation based on input points
         /// </summary>
         /// <param name="sourcePoints">used to transform from</param>
         /// <param name="targetPoints">used to transform to</param>
-        public TPSTransformation(List<GeoPoint> sourcePoints, List<GeoPoint> targetPoints)
+        public TPSTransformation(List<IPoint> sourcePoints, List<IPoint> targetPoints)
         {
             this.SourcePoints = sourcePoints.ConvertAll(p => p.Clone());
             this.CalculateTPSParameters(targetPoints.ConvertAll(p => p.Clone()));
@@ -32,10 +32,10 @@ namespace BojkoSoft.Transformations.TransformationModels
         /// </summary>
         /// <param name="inputPoint"></param>
         /// <returns></returns>
-        public GeoPoint Transform(GeoPoint inputPoint)
+        public IPoint Transform(IPoint inputPoint)
         {
-            double Xo = this.Xc[0] + this.Xc[1] * inputPoint.X + this.Xc[2] * inputPoint.Y,
-              Yo = this.Yc[0] + this.Yc[1] * inputPoint.X + this.Yc[2] * inputPoint.Y;
+            double Xo = this.Xc[0] + this.Xc[1] * inputPoint.N + this.Xc[2] * inputPoint.E,
+              Yo = this.Yc[0] + this.Yc[1] * inputPoint.N + this.Yc[2] * inputPoint.E;
 
             for (int r = 0; r < this.m; r++)
             {
@@ -44,7 +44,7 @@ namespace BojkoSoft.Transformations.TransformationModels
                 Yo += this.Yc[r + 3] * tmp;
             }
 
-            return new GeoPoint(Xo, Yo);
+            return new ControlPoint(Xo, Yo);
         }
 
         /// <summary>
@@ -53,10 +53,10 @@ namespace BojkoSoft.Transformations.TransformationModels
         /// <param name="first"></param>
         /// <param name="second"></param>
         /// <returns></returns>
-        private double kernelFunction(GeoPoint first, GeoPoint second)
+        private double kernelFunction(IPoint first, IPoint second)
         {
-            if (first.X == second.X && first.Y == second.Y) return 0;
-            double dist = (second.X - first.X) * (second.X - first.X) + (second.Y - first.Y) * (second.Y - first.Y);
+            if (first.N == second.N && first.E == second.E) return 0;
+            double dist = (second.N - first.N) * (second.N - first.N) + (second.E - first.E) * (second.E - first.E);
             return dist * Math.Log(dist);
         }
 
@@ -64,7 +64,7 @@ namespace BojkoSoft.Transformations.TransformationModels
         /// Calculates TPS transformation parameters
         /// </summary>
         /// <param name="targetPoints"></param>
-        private void CalculateTPSParameters(List<GeoPoint> targetPoints)
+        private void CalculateTPSParameters(List<IPoint> targetPoints)
         {
             if (this.SourcePoints.Count != targetPoints.Count) throw new Exception("Source and target points do not match!");
 
@@ -76,13 +76,13 @@ namespace BojkoSoft.Transformations.TransformationModels
             {
                 // top right part of matrix
                 A[0, 3 + i] = 1;
-                A[1, 3 + i] = this.SourcePoints[i].X;
-                A[2, 3 + i] = this.SourcePoints[i].Y;
+                A[1, 3 + i] = this.SourcePoints[i].N;
+                A[2, 3 + i] = this.SourcePoints[i].E;
 
                 // bottom left part of matrix
                 A[3 + i, 0] = 1;
-                A[3 + i, 1] = this.SourcePoints[i].X;
-                A[3 + i, 2] = this.SourcePoints[i].Y;
+                A[3 + i, 1] = this.SourcePoints[i].N;
+                A[3 + i, 2] = this.SourcePoints[i].E;
             }
 
             // the lower right part of the matrix
@@ -105,8 +105,8 @@ namespace BojkoSoft.Transformations.TransformationModels
             {
                 for (int c = 0; c < this.m; c++)
                 {
-                    this.Xc[r] += invertedA[r, c + 3] * targetPoints[c].X;
-                    this.Yc[r] += invertedA[r, c + 3] * targetPoints[c].Y;
+                    this.Xc[r] += invertedA[r, c + 3] * targetPoints[c].N;
+                    this.Yc[r] += invertedA[r, c + 3] * targetPoints[c].E;
                 }
             }
         }

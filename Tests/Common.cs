@@ -15,10 +15,10 @@ namespace BojkoSoft.Transformations.Tests
         public static readonly double DELTA_METERS = 0.01;          //   1cm
         public static readonly double DELTA_DEGREES = 0.0000001;    //   1cm
 
-        public static void CheckResults(GeoPoint expected, GeoPoint result, double delta, bool checkZ = false)
+        public static void CheckResults(IPoint expected, IPoint result, double delta, bool checkZ = false)
         {
-            double deltaX = Math.Abs(expected.X - result.X);
-            double deltaY = Math.Abs(expected.Y - result.Y);
+            double deltaX = Math.Abs(expected.N - result.N);
+            double deltaY = Math.Abs(expected.E - result.E);
             double dS = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
 
             if (checkZ)

@@ -55,12 +55,14 @@
     <Compile Include="Common.cs" />
     <Compile Include="TestBGSWithTPS.cs" />
     <Compile Include="TestBGSWithAffine.cs" />
+    <Compile Include="TestExtent.cs" />
     <Compile Include="TestFormatters.cs" />
     <Compile Include="TestGeographicAndGauss.cs" />
     <Compile Include="TestGeographicAndGeocentric.cs" />
     <Compile Include="TestGeographicAndLambert.cs" />
     <Compile Include="TestGeographicAndUTM.cs" />
     <Compile Include="TestGeographicAndWebMercator.cs" />
+    <Compile Include="TestPoint.cs" />
     <Compile Include="TransformationsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AffineTransformationTests.cs" />

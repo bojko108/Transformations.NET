@@ -10,47 +10,47 @@ namespace BojkoSoft.Transformations.Constants
         /// <summary>
         /// GRS 1980
         /// </summary>
-        GRS80,
+        GRS80 = 7019,
         /// <summary>
         /// Bessel 1841
         /// </summary>
-        BESSEL_1841,
+        BESSEL_1841 = 7004,
         /// <summary>
         /// Clarke 1866
         /// </summary>
-        CLARKE_1866,
+        CLARKE_1866 = 7008,
         /// <summary>
         /// Everest (Sabah and Sarawak)
         /// </summary>
-        EVEREST,
+        EVEREST = 7018,
         /// <summary>
         /// Helmert 1906
         /// </summary>
-        HELMERT,
+        HELMERT = 7020,
         /// <summary>
         /// Hayford
         /// </summary>
-        HAYFORD,
+        HAYFORD = 104106,
         /// <summary>
         /// Krassovsky, 1942
         /// </summary>
-        KRASSOVSKY,
+        KRASSOVSKY = 7024,
         /// <summary>
         /// Walbeck
         /// </summary>
-        WALBECK,
+        WALBECK = 37007,
         /// <summary>
         /// WGS 1972
         /// </summary>
-        WGS72,
+        WGS72 = 7043,
         /// <summary>
         /// WGS 1984
         /// </summary>
-        WGS84,
+        WGS84 = 7030,
         /// <summary>
         /// Normal Sphere (R=6378137)
         /// </summary>
-        SPHERE
+        SPHERE = 0
     }
 
     /// <summary>
