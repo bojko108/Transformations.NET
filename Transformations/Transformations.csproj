@@ -37,9 +37,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KDBush">
-      <HintPath>..\packages\KDBush.1.0.11\lib\net461\KDBush.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -75,6 +72,12 @@
     <Compile Include="TransformationModels\Matrix.cs" />
     <Compile Include="TransformationModels\TPSTransformation.cs" />
     <Compile Include="Transformations.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\KDBush\KDBush.csproj">
+      <Project>{3f6ba04d-fff1-4c2f-bb3d-c0c83dda341f}</Project>
+      <Name>KDBush</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -614,10 +614,6 @@ double result = tr.ConvertDMStoDecimalDegrees(dms);
 - Fix IPoint constructor when used like: `new Point(int id, double X, double Y)`
 - Implement Polynomial transformation
 
-# Dependencies
-
-This project depends on [KDBush](https://github.com/marchello2000/kdbush) project for fast searching within control points.
-
 # Tests
 
 Check [Tests](https://github.com/bojko108/Transformations.NET/tree/master/Tests) project for more information.

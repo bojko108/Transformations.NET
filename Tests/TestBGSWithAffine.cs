@@ -9,14 +9,35 @@ namespace BojkoSoft.Transformations.Tests
     public class TestBGSWithAffine
     {
         private static Transformations tr;
+        private static TransUtils.Transformation tr2;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)
         {
             tr = new Transformations();
+            tr2 = new TransUtils.Transformation();
         }
 
         #region BGS 1930
+
+        [TestMethod()]
+        public void TransformFromBGS1930_NEW()
+        {
+            // 24 degrees
+            IPoint input = new TestPoint(4728966.163, 8607005.227);
+            IPoint expected = new TestPoint(4728401.432, 483893.508);
+            double x = input.N, y = input.E, h = input.Z;
+            tr2.PrjTransform(
+                (ushort)TransUtils.CoordSys.CS1930, 8, (ushort)TransUtils.CoordType.XYH, 0,
+                (ushort)TransUtils.CoordSys.CS2005, 0, (ushort)TransUtils.CoordType.XYH, 0, 0,
+                ref x, ref y, ref h);
+
+            // 27 degrees
+            //input = new TestPoint(4729531.133, 9361175.733);
+            ////result = tr.TransformBGSCoordinates(input, enumProjection.BGS_1930_27, enumProjection.BGS_2005_KK, false);
+            //result = tr.Transform(input, enumProjection.BGS_1930_27, enumProjection.BGS_2005_KK, false);
+            //Common.CheckResults(expected, result, Common.DELTA_BGS);
+        }
 
         [TestMethod()]
         public void TransformFromBGS1930()
@@ -143,6 +164,52 @@ namespace BojkoSoft.Transformations.Tests
         #region BGS 1970
 
         [TestMethod()]
+        public void TransformFromBGS1970_NEW()
+        {
+            // K3
+            IPoint input = new TestPoint(4725270.684, 8515734.475);
+            IPoint expected = new TestPoint(4816275.680, 332535.401);
+            double x = input.N, y = input.E, h = input.Z;
+            tr2.PrjTransform(
+                (ushort)TransUtils.CoordSys.CS1970, 3, (ushort)TransUtils.CoordType.XYH, 0,
+                (ushort)TransUtils.CoordSys.CS2005, 0, (ushort)TransUtils.CoordType.XYH, 0, 0,
+                ref x, ref y, ref h);
+
+            // K5
+            input = new TestPoint(4613479.192, 9493233.633);
+            expected = new TestPoint(4679669.825, 569554.918);
+            x = input.N;
+            y = input.E;
+            h = input.Z;
+            tr2.PrjTransform(
+                (ushort)TransUtils.CoordSys.CS1970, 5, (ushort)TransUtils.CoordType.XYH, 0,
+                (ushort)TransUtils.CoordSys.CS2005, 0, (ushort)TransUtils.CoordType.XYH, 0, 0,
+                ref x, ref y, ref h);
+
+            // K7
+            input = new TestPoint(4708089.898, 9570974.988);
+            expected = new TestPoint(4810276.431, 626498.611);
+            x = input.N;
+            y = input.E;
+            h = input.Z;
+            tr2.PrjTransform(
+                (ushort)TransUtils.CoordSys.CS1970, 7, (ushort)TransUtils.CoordType.XYH, 0,
+                (ushort)TransUtils.CoordSys.CS2005, 0, (ushort)TransUtils.CoordType.XYH, 0, 0,
+                ref x, ref y, ref h);
+
+            // K9
+            input = new TestPoint(4547844.976, 8508858.179);
+            expected = new TestPoint(4675440.847, 330568.434);
+            x = input.N;
+            y = input.E;
+            h = input.Z;
+            tr2.PrjTransform(
+                (ushort)TransUtils.CoordSys.CS1970, 9, (ushort)TransUtils.CoordType.XYH, 0,
+                (ushort)TransUtils.CoordSys.CS2005, 0, (ushort)TransUtils.CoordType.XYH, 0, 0,
+                ref x, ref y, ref h);
+        }
+
+        [TestMethod()]
         public void TransformFromBGS1970()
         {
             // K3
@@ -178,6 +245,52 @@ namespace BojkoSoft.Transformations.Tests
             //result = tr.TransformBGSCoordinates(input, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK, false);
             result = tr.Transform(input, enumProjection.BGS_1970_K9, enumProjection.BGS_2005_KK, false);
             Common.CheckResults(expected, result, Common.DELTA_BGS);
+        }
+
+        [TestMethod()]
+        public void TransformToBGS1970_New()
+        {
+            // K3
+            IPoint input = new TestPoint(4816275.680, 332535.401);
+            IPoint expected = new TestPoint(4725270.684, 8515734.475);
+            double x = input.N, y = input.E, h = input.Z;
+            tr2.PrjTransform(
+                (ushort)TransUtils.CoordSys.CS2005, 3, (ushort)TransUtils.CoordType.XYH, 0,
+                (ushort)TransUtils.CoordSys.CS1970, 3, (ushort)TransUtils.CoordType.XYH, 0, 0,
+                ref x, ref y, ref h);
+
+            // K5
+            input = new TestPoint(4679669.825, 569554.918);
+            expected = new TestPoint(4613479.192, 9493233.633);
+            x = input.N;
+            y = input.E;
+            h = input.Z;
+            tr2.PrjTransform(
+                (ushort)TransUtils.CoordSys.CS2005, 5, (ushort)TransUtils.CoordType.XYH, 0,
+                (ushort)TransUtils.CoordSys.CS1970, 5, (ushort)TransUtils.CoordType.XYH, 0, 0,
+                ref x, ref y, ref h);
+
+            // K7
+            input = new TestPoint(4810276.431, 626498.611);
+            expected = new TestPoint(4708089.898, 9570974.988);
+            x = input.N;
+            y = input.E;
+            h = input.Z;
+            tr2.PrjTransform(
+                (ushort)TransUtils.CoordSys.CS2005, 7, (ushort)TransUtils.CoordType.XYH, 0,
+                (ushort)TransUtils.CoordSys.CS1970, 7, (ushort)TransUtils.CoordType.XYH, 0, 0,
+                ref x, ref y, ref h);
+
+            // K9
+            input = new TestPoint(4675440.847, 330568.434);
+            expected = new TestPoint(4547844.976, 8508858.179);
+            x = input.N;
+            y = input.E;
+            h = input.Z;
+            tr2.PrjTransform(
+                (ushort)TransUtils.CoordSys.CS2005, 9, (ushort)TransUtils.CoordType.XYH, 0,
+                (ushort)TransUtils.CoordSys.CS1970, 9, (ushort)TransUtils.CoordType.XYH, 0, 0,
+                ref x, ref y, ref h);
         }
 
         [TestMethod()]
