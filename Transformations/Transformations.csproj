@@ -37,7 +37,10 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>bojko108.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -77,6 +80,9 @@
     <Compile Include="TransformationModels\Matrix.cs" />
     <Compile Include="TransformationModels\TPSTransformation.cs" />
     <Compile Include="Transformations.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bojko108.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
