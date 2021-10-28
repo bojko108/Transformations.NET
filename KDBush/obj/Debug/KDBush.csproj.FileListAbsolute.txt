@@ -1,5 +1,0 @@
-E:\_WORK\VS 2017\Transformations.NET\KDBush\bin\Debug\KDBush.dll
-E:\_WORK\VS 2017\Transformations.NET\KDBush\bin\Debug\KDBush.pdb
-E:\_WORK\VS 2017\Transformations.NET\KDBush\obj\Debug\KDBush.csproj.CoreCompileInputs.cache
-E:\_WORK\VS 2017\Transformations.NET\KDBush\obj\Debug\KDBush.dll
-E:\_WORK\VS 2017\Transformations.NET\KDBush\obj\Debug\KDBush.pdb

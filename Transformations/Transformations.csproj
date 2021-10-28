@@ -36,6 +36,9 @@
     <DocumentationFile>bin\Release\Transformations.xml</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,18 +69,14 @@
     <Compile Include="Internals\ControlPoint.cs" />
     <Compile Include="IExtent.cs" />
     <Compile Include="IPoint.cs" />
+    <Compile Include="KDBush\KDBush.cs" />
+    <Compile Include="KDBush\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransformationModels\AffineTransformation.cs" />
     <Compile Include="TransformationModels\ITransformation.cs" />
     <Compile Include="TransformationModels\Matrix.cs" />
     <Compile Include="TransformationModels\TPSTransformation.cs" />
     <Compile Include="Transformations.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\KDBush\KDBush.csproj">
-      <Project>{3f6ba04d-fff1-4c2f-bb3d-c0c83dda341f}</Project>
-      <Name>KDBush</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

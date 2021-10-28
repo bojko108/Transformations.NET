@@ -12,7 +12,7 @@ namespace KDBush
     /// (can't add points once the index is constructed).
     /// However, the queries are significantly (5-8x) faster
     /// </summary>
-    public class KDBush<T>
+    internal class KDBush<T>
     {
         internal readonly int nodeSize;
         internal List<Point<T>> points;
