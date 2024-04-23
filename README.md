@@ -123,7 +123,8 @@ A posible solution is to create a singleton class, simmilar to this one:
 
 ```csharp
 using BojkoSoft.Transformations;
-...
+using BojkoSoft.Transformations.Constants;
+
 namespace YourNamespace
 {
   sealed class TransformationUtils
@@ -135,8 +136,8 @@ namespace YourNamespace
     {
       get
       {
-        return this.SourceProjection != CoordinateSystem.Unknown
-            && this.TargetProjection != CoordinateSystem.Unknown
+        return this.SourceProjection != enumProjection.Unknown
+            && this.TargetProjection != enumProjection.Unknown
             && this.SourceProjection != this.TargetProjection;
       }
     }
@@ -161,7 +162,7 @@ namespace YourNamespace
       if (extent.IsEmpty || extent.Height < 20000 || extent.Width < 20000)
         extent.Expand(20000);
       this.parameters = this.tr.CalculateAffineTransformationParameters(
-        extent, source, target);
+        extent, this.SourceProjection, this.TargetProjection);
     }
 
     public IPoint TransformPoint(IPoint sourcePoint)
