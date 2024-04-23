@@ -985,9 +985,88 @@ namespace BojkoSoft.Transformations
             return outputPoint;
         }
 
+        /// <summary>
+        /// Transform input coordinates
+        /// </summary>
+        /// <param name="inputCoordinates">input coordinates - an array of 2 (N,E) or 3 (N,E,Z) coordinates</param>
+        /// <param name="sourceProjection">input projection</param>
+        /// <param name="targetProjection">output projection</param>
+        /// <param name="useTPS">use TPS or Affine transformations</param>
+        /// <returns></returns>
+        public double[] Transform(double[] inputCoordinates, int sourceProjection, int targetProjection, bool useTPS = false)
+        {
+            if (inputCoordinates.Length < 2 || inputCoordinates.Length > 3)
+                throw new ArgumentException($"Expecting an array of 2 (X,Y) or 3 (X,Y,Z) coordinates, provided: {inputCoordinates.Length}");
 
+            bool hasZ = inputCoordinates.Length == 3;
 
+            IPoint src = new ControlPoint(inputCoordinates[0], inputCoordinates[1]);
+            if (hasZ)
+                src.Z = inputCoordinates[2];
 
+            IPoint res = this.Transform(src, (enumProjection)sourceProjection, (enumProjection)targetProjection, useTPS);
+            res.Z = src.Z;
+
+            return hasZ ? new double[] { res.N, res.E, res.Z } : new double[] { res.N, res.E, };
+        }
+        /// <summary>
+        /// Transform input coordinates
+        /// </summary>
+        /// <param name="inputCoordinates">input coordinates - an array of 2 (N,E) or 3 (N,E,Z) coordinates</param>
+        /// <param name="sourceProjection">input projection</param>
+        /// <param name="targetProjection">output projection</param>
+        /// <param name="useTPS">use TPS or Affine transformations</param>
+        /// <returns></returns>
+        public double[] Transform(double[] inputCoordinates, enumProjection sourceProjection, enumProjection targetProjection, bool useTPS = false)
+            => this.Transform(inputCoordinates, (int)sourceProjection, (int)targetProjection, useTPS);
+
+        /// <summary>
+        /// Transform input coordinates
+        /// </summary>
+        /// <param name="inputCoordinates">input coordinates - N and E</param>
+        /// <param name="sourceProjection">input projection</param>
+        /// <param name="targetProjection">output projection</param>
+        /// <param name="useTPS">use TPS or Affine transformations</param>
+        /// <returns></returns>
+        public Tuple<double, double> Transform(Tuple<double, double> inputCoordinates, int sourceProjection, int targetProjection, bool useTPS = false)
+        {
+            double[] res = this.Transform(new double[] { inputCoordinates.Item1, inputCoordinates.Item2 }, sourceProjection, targetProjection, useTPS);
+            return new Tuple<double, double>(res[0], res[1]);
+        }
+        /// <summary>
+        /// Transform input coordinates
+        /// </summary>
+        /// <param name="inputCoordinates">input coordinates - N and E</param>
+        /// <param name="sourceProjection">input projection</param>
+        /// <param name="targetProjection">output projection</param>
+        /// <param name="useTPS">use TPS or Affine transformations</param>
+        /// <returns></returns>
+        public Tuple<double, double> Transform(Tuple<double, double> inputCoordinates, enumProjection sourceProjection, enumProjection targetProjection, bool useTPS = false)
+            => this.Transform(inputCoordinates, (int)sourceProjection, (int)targetProjection, useTPS);
+
+        /// <summary>
+        /// Transform input coordinates
+        /// </summary>
+        /// <param name="inputCoordinates">input coordinates - N, E and Z</param>
+        /// <param name="sourceProjection">input projection</param>
+        /// <param name="targetProjection">output projection</param>
+        /// <param name="useTPS">use TPS or Affine transformations</param>
+        /// <returns></returns>
+        public Tuple<double, double, double> Transform(Tuple<double, double, double> inputCoordinates, int sourceProjection, int targetProjection, bool useTPS = false)
+        {
+            double[] res = this.Transform(new double[] { inputCoordinates.Item1, inputCoordinates.Item2,inputCoordinates.Item3 }, sourceProjection, targetProjection, useTPS);
+            return new Tuple<double, double, double>(res[0], res[1], res[2]);
+        }
+        /// <summary>
+        /// Transform input coordinates
+        /// </summary>
+        /// <param name="inputCoordinates">input coordinates - N, E and Z</param>
+        /// <param name="sourceProjection">input projection</param>
+        /// <param name="targetProjection">output projection</param>
+        /// <param name="useTPS">use TPS or Affine transformations</param>
+        /// <returns></returns>
+        public Tuple<double, double, double> Transform(Tuple<double, double, double> inputCoordinates, enumProjection sourceProjection, enumProjection targetProjection, bool useTPS = false)
+            => this.Transform(inputCoordinates, (int)sourceProjection, (int)targetProjection, useTPS);
 
 
         //#region STEREO70

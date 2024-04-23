@@ -67,6 +67,7 @@
     <Compile Include="TestGeographicAndUTM.cs" />
     <Compile Include="TestGeographicAndWebMercator.cs" />
     <Compile Include="TestPoint.cs" />
+    <Compile Include="TransformCoordinatesTests.cs" />
     <Compile Include="TransformationsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AffineTransformationTests.cs" />

@@ -33,5 +33,47 @@ namespace BojkoSoft.Transformations.Tests
                 Console.WriteLine(String.Format("expected: {0}; result: {1}\ndS: {2}", expected, result, dS));
             }
         }
-    }
+
+        public static void CheckResults(double[] expected, double[] result, double delta)
+        {
+            double deltaX = Math.Abs(expected[0] - result[0]);
+            double deltaY = Math.Abs(expected[1] - result[1]);
+            double dS = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            if (expected.Length == 3)
+            {
+                double deltaZ = Math.Abs(expected[2] - result[2]);
+                Assert.IsTrue(deltaZ <= delta, "dZ is too high: " + deltaZ);
+                Console.WriteLine(String.Format("expected: {0}\nreceived: {1}\ndeltaX: {2}\ndeltaY: {3}\ndeltaZ: {4}", expected.ToString(), result.ToString(), deltaX, deltaY, deltaZ));
+            }
+            else
+            {
+                Assert.IsTrue(dS <= delta, "dS is too high: " + dS);
+                Console.WriteLine(String.Format("expected: {0}; result: {1}\ndS: {2}", expected, result, dS));
+            }
+        }
+
+        public static void CheckResults(Tuple<double, double> expected, Tuple<double, double> result, double delta)
+        {
+            double deltaX = Math.Abs(expected.Item1 - result.Item1);
+            double deltaY = Math.Abs(expected.Item2 - result.Item2);
+            double dS = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            Assert.IsTrue(dS <= delta, "dS is too high: " + dS);
+            Console.WriteLine(String.Format("expected: {0}; result: {1}\ndS: {2}", expected, result, dS));
+        }
+
+        public static void CheckResults(Tuple<double, double, double> expected, Tuple<double, double, double> result, double delta)
+        {
+            double deltaX = Math.Abs(expected.Item1 - result.Item1);
+            double deltaY = Math.Abs(expected.Item2 - result.Item2);
+            double dS = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            Assert.IsTrue(dS <= delta, "dS is too high: " + dS);
+
+            double deltaZ = Math.Abs(expected.Item3 - result.Item3);
+            Assert.IsTrue(deltaZ <= delta, "dZ is too high: " + deltaZ);
+            Console.WriteLine(String.Format("expected: {0}\nreceived: {1}\ndeltaX: {2}\ndeltaY: {3}\ndeltaZ: {4}", expected.ToString(), result.ToString(), deltaX, deltaY, deltaZ));
+        }
+    } 
 }
