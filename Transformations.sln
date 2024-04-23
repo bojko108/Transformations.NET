@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31410.357
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Transformations", "Transformations\Transformations.csproj", "{E1CEE400-A6AB-47BB-9B22-039E0EEC1920}"
 EndProject
@@ -9,14 +9,19 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_net35|Any CPU = Debug_net35|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1CEE400-A6AB-47BB-9B22-039E0EEC1920}.Debug_net35|Any CPU.ActiveCfg = Debug_net35|Any CPU
+		{E1CEE400-A6AB-47BB-9B22-039E0EEC1920}.Debug_net35|Any CPU.Build.0 = Debug_net35|Any CPU
 		{E1CEE400-A6AB-47BB-9B22-039E0EEC1920}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1CEE400-A6AB-47BB-9B22-039E0EEC1920}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1CEE400-A6AB-47BB-9B22-039E0EEC1920}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E1CEE400-A6AB-47BB-9B22-039E0EEC1920}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2157216E-6E03-48DD-B74D-8AF01EE77AF9}.Debug_net35|Any CPU.ActiveCfg = Debug_net35|Any CPU
+		{2157216E-6E03-48DD-B74D-8AF01EE77AF9}.Debug_net35|Any CPU.Build.0 = Debug_net35|Any CPU
 		{2157216E-6E03-48DD-B74D-8AF01EE77AF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2157216E-6E03-48DD-B74D-8AF01EE77AF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2157216E-6E03-48DD-B74D-8AF01EE77AF9}.Release|Any CPU.ActiveCfg = Release|Any CPU

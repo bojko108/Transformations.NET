@@ -1020,6 +1020,7 @@ namespace BojkoSoft.Transformations
         public double[] Transform(double[] inputCoordinates, enumProjection sourceProjection, enumProjection targetProjection, bool useTPS = false)
             => this.Transform(inputCoordinates, (int)sourceProjection, (int)targetProjection, useTPS);
 
+#if !net35
         /// <summary>
         /// Transform input coordinates
         /// </summary>
@@ -1067,7 +1068,7 @@ namespace BojkoSoft.Transformations
         /// <returns></returns>
         public Tuple<double, double, double> Transform(Tuple<double, double, double> inputCoordinates, enumProjection sourceProjection, enumProjection targetProjection, bool useTPS = false)
             => this.Transform(inputCoordinates, (int)sourceProjection, (int)targetProjection, useTPS);
-
+#endif
 
         //#region STEREO70
 
